@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MIN_DEPOSIT, RATE, fmt } from "@/app/lib/arena";
+import { MIN_WITHDRAW, RATE, fmt } from "@/app/lib/arena";
 
 type Tab = "deposit" | "withdraw";
 
@@ -9,8 +9,8 @@ type BankPanelProps = {
   celo: number;
   api: number;
   busy: boolean;
-  onDeposit: (amount: number) => string | null;
-  onWithdraw: (amount: number) => string | null;
+  onDeposit: (amount: number) => Promise<string | null>;
+  onWithdraw: (amount: number) => Promise<string | null>;
 };
 
 export default function BankPanel({
@@ -23,6 +23,7 @@ export default function BankPanel({
   const [tab, setTab] = useState<Tab>("deposit");
   const [value, setValue] = useState("1");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [sending, setSending] = useState(false);
 
   const amount = Number(value);
   const validAmount = Number.isFinite(amount) && amount > 0;
@@ -30,26 +31,34 @@ export default function BankPanel({
     ? "0"
     : tab === "deposit"
       ? `${fmt(amount * RATE, 0)} API`
-      : `${fmt(amount / RATE, 6)} CELO`;
+      : `${fmt(Math.floor(amount / RATE), 6)} CELO`;
 
   const switchTab = (next: Tab) => {
     setTab(next);
-    setValue(next === "deposit" ? "1" : "100");
+    setValue(next === "deposit" ? "1" : "1000");
     setMsg(null);
   };
 
-  const submit = () => {
-    const err = tab === "deposit" ? onDeposit(amount) : onWithdraw(amount);
-    if (err) {
-      setMsg({ ok: false, text: err });
-    } else {
-      setMsg({
-        ok: true,
-        text:
-          tab === "deposit"
-            ? `Deposit berhasil — +${fmt(amount * RATE, 0)} API ✓`
-            : `Withdraw berhasil — +${fmt(amount / RATE, 6)} CELO ✓`,
-      });
+  const submit = async () => {
+    if (sending) return;
+    setSending(true);
+    setMsg(null);
+    try {
+      const err =
+        tab === "deposit" ? await onDeposit(amount) : await onWithdraw(amount);
+      if (err) {
+        setMsg({ ok: false, text: err });
+      } else {
+        setMsg({
+          ok: true,
+          text:
+            tab === "deposit"
+              ? `Deposit terkonfirmasi — +${fmt(amount * RATE, 0)} API ✓`
+              : `Withdraw terkonfirmasi — +${fmt(Math.floor(amount / RATE), 6)} CELO ✓`,
+        });
+      }
+    } finally {
+      setSending(false);
     }
   };
 
@@ -59,8 +68,8 @@ export default function BankPanel({
         <h2 className="font-display text-lg tracking-wider text-cream">
           BANK ARENA
         </h2>
-        <span className="rounded-full border border-ember-500/30 bg-ember-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-ember-300">
-          DEMO
+        <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-emerald-300">
+          ON-CHAIN
         </span>
       </div>
 
@@ -99,8 +108,8 @@ export default function BankPanel({
       <input
         id="bank-amount"
         type="number"
-        min={tab === "deposit" ? MIN_DEPOSIT : 1}
-        step={tab === "deposit" ? 0.001 : 1}
+        min={tab === "deposit" ? 0.001 : MIN_WITHDRAW}
+        step={tab === "deposit" ? 0.001 : RATE}
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
@@ -117,10 +126,14 @@ export default function BankPanel({
       <button
         type="button"
         onClick={submit}
-        disabled={busy || !validAmount}
+        disabled={busy || sending || !validAmount}
         className="btn-ember font-display mt-4 w-full rounded-2xl py-3.5 tracking-wider transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
       >
-        {tab === "deposit" ? "DEPOSIT SEKARANG" : "WITHDRAW SEKARANG"}
+        {sending
+          ? "MENUNGGU KONFIRMASI…"
+          : tab === "deposit"
+            ? "DEPOSIT SEKARANG"
+            : "WITHDRAW SEKARANG"}
       </button>
 
       {msg && (
@@ -132,8 +145,8 @@ export default function BankPanel({
       )}
 
       <p className="mt-3 text-center text-[11px] text-abyss-300">
-        Rasio tetap 1 CELO = {fmt(RATE, 0)} API · min deposit {MIN_DEPOSIT}{" "}
-        CELO.
+        Rasio tetap 1 CELO = {fmt(RATE, 0)} API · withdraw kelipatan{" "}
+        {fmt(MIN_WITHDRAW, 0)} API.
       </p>
     </section>
   );
