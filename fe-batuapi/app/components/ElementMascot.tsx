@@ -68,3 +68,38 @@ function Batu({ id }: { id: string }) {
       <path
         d="M60 12 C78 10 96 22 102 40 C108 58 106 80 92 94 C78 108 46 110 30 98 C14 86 10 64 16 44 C22 24 42 14 60 12 Z"
         fill={`url(#${id}-g)`}
+      />
+      <ellipse
+        cx="44"
+        cy="27"
+        rx="13"
+        ry="6"
+        fill="#e8eef2"
+        opacity="0.5"
+        transform="rotate(-16 44 27)"
+      />
+      <path
+        d="M28 46 l10 6 -4 9"
+        stroke="#55626b"
+        strokeWidth="3"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.55"
+      />
+      <path
+        d="M88 70 l-9 6 3 9"
+        stroke="#55626b"
+        strokeWidth="3"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.55"
+      />
+      <Eyes
+        eyes={[
+          { cx: 45, cy: 54, rx: 10.5, ry: 12.5, px: 3, py: 2 },
+          { cx: 75, cy: 52, rx: 11.5, ry: 13.5, px: 1, py: -2 },
+        ]}
+      />
+      <Mouth points="47,82 53,76 59,82 65,76 71,82" color="#3c474e" />
