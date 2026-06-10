@@ -54,3 +54,31 @@ export default function ElementCards() {
                 }`}
               >
                 <div
+                  className={`el-glow-bg absolute top-4 h-28 w-28 blur-2xl transition-opacity duration-300 ${
+                    isSelected
+                      ? "opacity-45"
+                      : "opacity-0 group-hover:opacity-30"
+                  }`}
+                  aria-hidden="true"
+                />
+
+                <div
+                  className="animate-float relative w-24 sm:w-28"
+                  style={{ animationDelay: `${i * 0.5}s` }}
+                >
+                  <ElementMascot
+                    element={el.key}
+                    idPrefix={`card-${el.key}`}
+                    className="w-full drop-shadow-[0_10px_18px_rgba(0,0,0,0.45)]"
+                  />
+                </div>
+                <div
+                  className="mt-2 h-2.5 w-16 rounded-[100%] bg-black/50 blur-[5px]"
+                  aria-hidden="true"
+                />
+
+                <h3
+                  className={`font-display mt-4 text-xl tracking-wide ${
+                    isSelected ? "el-text" : "text-cream"
+                  }`}
+                >
