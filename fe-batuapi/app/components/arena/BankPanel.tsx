@@ -104,3 +104,37 @@ export default function BankPanel({
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
+          setMsg(null);
+        }}
+        className="mt-2 w-full rounded-xl border border-white/10 bg-night/70 p-3 text-lg font-semibold text-cream outline-none transition-colors focus:border-ember-400/60"
+      />
+
+      <p className="mt-3 flex items-center justify-between text-sm">
+        <span className="text-abyss-300">Kamu menerima</span>
+        <strong className="text-ember-300">{preview}</strong>
+      </p>
+
+      <button
+        type="button"
+        onClick={submit}
+        disabled={busy || !validAmount}
+        className="btn-ember font-display mt-4 w-full rounded-2xl py-3.5 tracking-wider transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+      >
+        {tab === "deposit" ? "DEPOSIT SEKARANG" : "WITHDRAW SEKARANG"}
+      </button>
+
+      {msg && (
+        <p
+          className={`mt-3 text-xs ${msg.ok ? "text-emerald-300" : "text-red-300"}`}
+        >
+          {msg.ok ? "✅" : "⚠️"} {msg.text}
+        </p>
+      )}
+
+      <p className="mt-3 text-center text-[11px] text-abyss-300">
+        Rasio tetap 1 CELO = {fmt(RATE, 0)} API · min deposit {MIN_DEPOSIT}{" "}
+        CELO.
+      </p>
+    </section>
+  );
+}
