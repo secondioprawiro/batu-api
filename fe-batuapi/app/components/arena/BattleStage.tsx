@@ -248,3 +248,53 @@ export default function BattleStage({
         {ELEMENTS.map((el) => {
           const isSelected = el.key === selected;
           return (
+            <button
+              key={el.key}
+              type="button"
+              disabled={fighting}
+              onClick={() => onSelect(el.key)}
+              aria-pressed={isSelected}
+              style={{ "--el": el.color } as React.CSSProperties}
+              className={`flex flex-col items-center gap-1 rounded-2xl border bg-abyss-800/60 p-2 transition-all duration-200 disabled:opacity-60 sm:p-3 ${
+                isSelected
+                  ? "el-card-selected border-white/10"
+                  : "border-white/10 hover:-translate-y-1 hover:border-white/25"
+              }`}
+            >
+              <ElementMascot
+                element={el.key}
+                idPrefix={`pick-${el.key}`}
+                className="w-10 sm:w-14"
+              />
+              <span
+                className={`font-display text-xs tracking-wide sm:text-sm ${
+                  isSelected ? "el-text" : "text-cream"
+                }`}
+              >
+                {el.name}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Bet */}
+      <div className="mt-5 flex flex-wrap items-end gap-3">
+        <div className="min-w-40 flex-1">
+          <label
+            htmlFor="bet-input"
+            className="text-xs font-semibold tracking-[0.3em] text-abyss-300"
+          >
+            BET (API)
+          </label>
+          <input
+            id="bet-input"
+            type="number"
+            min={MIN_BET}
+            step={1}
+            value={bet}
+            disabled={fighting}
+            onChange={(e) => onBetChange(e.target.value)}
+            className="mt-2 w-full rounded-xl border border-white/10 bg-night/70 p-3 text-lg font-semibold text-cream outline-none transition-colors focus:border-ember-400/60 disabled:opacity-60"
+          />
+        </div>
