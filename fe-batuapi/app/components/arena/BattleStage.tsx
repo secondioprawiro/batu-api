@@ -198,3 +198,53 @@ export default function BattleStage({
                   {byKey[result.player].name} {byKey[result.player].verb}{" "}
                   {byKey[result.system].name}! Profit{" "}
                   <strong className="text-emerald-300">
+                    +{fmt(result.delta, 0)} API
+                  </strong>
+                  {result.bonus > 0 && (
+                    <>
+                      {" "}
+                      (termasuk Streak Bonus ⚡ +{fmt(result.bonus, 0)} API —{" "}
+                      {STREAK_EVERY} menang beruntun!)
+                    </>
+                  )}
+                </>
+              )}
+              {result.outcome === "lose" && (
+                <>
+                  {byKey[result.system].name} {byKey[result.system].verb}{" "}
+                  {byKey[result.player].name}.{" "}
+                  <strong className="text-red-300">
+                    -{fmt(result.bet, 0)} API
+                  </strong>{" "}
+                  masuk ke reward pool.
+                </>
+              )}
+              {result.outcome === "draw" &&
+                (result.player === result.system ? (
+                  <>Elemen sama — bet dikembalikan, tidak ada perubahan saldo.</>
+                ) : (
+                  <>
+                    {byKey[result.player].name} dan {byKey[result.system].name}{" "}
+                    tidak saling mengalahkan — seri, bet dikembalikan.
+                  </>
+                ))}
+            </p>
+            <button
+              type="button"
+              onClick={onAgain}
+              className="btn-ember font-display mt-4 rounded-full px-7 py-2.5 tracking-wider transition-transform hover:-translate-y-0.5"
+            >
+              ⚔️ BATTLE LAGI
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Pemilih elemen */}
+      <p className="mt-6 text-xs font-semibold tracking-[0.3em] text-abyss-300">
+        PILIH ELEMEN
+      </p>
+      <div className="mt-2 grid grid-cols-4 gap-2 sm:gap-3">
+        {ELEMENTS.map((el) => {
+          const isSelected = el.key === selected;
+          return (
