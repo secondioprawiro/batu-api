@@ -136,3 +136,49 @@ export default function Arena() {
     let bonus = 0;
     let { streakEl, streakN } = state;
     if (outcome === "win") {
+      streakN = streakEl === selected ? streakN + 1 : 1;
+      streakEl = selected;
+      if (streakN % STREAK_EVERY === 0) bonus = Math.round(betN * STREAK_BONUS);
+      delta = Math.round(betN * WIN_PROFIT) + bonus;
+    } else if (outcome === "lose") {
+      delta = -betN;
+      streakN = 0;
+      streakEl = null;
+    }
+
+    const record: FightResult = {
+      player: selected,
+      system,
+      bet: betN,
+      outcome,
+      delta,
+      bonus,
+    };
+
+    setState((s) => ({
+      ...s,
+      api: s.api + delta,
+      pool: s.pool - delta,
+      streakEl,
+      streakN,
+      history: [{ id: Date.now(), ...record }, ...s.history].slice(0, 8),
+    }));
+    setResult(record);
+    setPhase("result");
+  };
+
+  const hudChips = [
+    { icon: "🟡", label: "CELO", value: fmt(state.celo) },
+    { icon: "🔥", label: "API", value: fmt(state.api, 0) },
+    { icon: "🏺", label: "Pool", value: fmt(state.pool, 0) },
+  ];
+
+  return (
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-gradient-to-b from-blood-950 via-abyss-950 to-night">
+      {/* Dekorasi atmosfer */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="animate-drift absolute -left-40 top-1/4 h-96 w-[40rem] rounded-full bg-abyss-600/10 blur-3xl" />
+        <div
+          className="animate-drift absolute -right-40 bottom-10 h-80 w-[36rem] rounded-full bg-ember-500/5 blur-3xl"
+          style={{ animationDelay: "-9s" }}
+        />
