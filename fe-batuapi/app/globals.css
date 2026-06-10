@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  /* === Batu Api — dark fantasy palette === */
+  --color-night: #03100f;
+
+  --color-abyss-950: #061b1a;
+  --color-abyss-900: #082523;
+  --color-abyss-800: #0b302d;
+  --color-abyss-700: #104039;
+  --color-abyss-600: #186052;
+  --color-abyss-400: #3e8a76;
+  --color-abyss-300: #7fb3a6;
+  --color-abyss-200: #aacfc4;
+
+  --color-blood-950: #1d0a16;
+  --color-blood-900: #2c0e1e;
+  --color-blood-800: #401528;
+
+  --color-ember-200: #ffe2b0;
+  --color-ember-300: #ffc56e;
+  --color-ember-400: #ffaa3c;
+  --color-ember-500: #ff8a1e;
+  --color-ember-600: #ef6c12;
+  --color-ember-700: #c84e0d;
+
+  --color-cream: #fbf0da;
+
+  --font-display: var(--font-display-g), "Trebuchet MS", system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 3.6s ease-in-out infinite;
+  --animate-flicker: flicker 2.8s ease-in-out infinite;
+  --animate-drift: drift 22s ease-in-out infinite alternate;
+  --animate-rise: rise 12s linear infinite;
