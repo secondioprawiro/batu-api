@@ -35,3 +35,40 @@
   --animate-flicker: flicker 2.8s ease-in-out infinite;
   --animate-drift: drift 22s ease-in-out infinite alternate;
   --animate-rise: rise 12s linear infinite;
+  --animate-shake: shake 0.45s ease-in-out infinite;
+  --animate-pop: pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  30% {
+    transform: scale(1.04) rotate(-1.2deg);
+  }
+  60% {
+    transform: scale(0.97) rotate(1.2deg);
+  }
+}
+
