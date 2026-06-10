@@ -82,3 +82,31 @@ export default function ElementCards() {
                     isSelected ? "el-text" : "text-cream"
                   }`}
                 >
+                  {el.name}
+                </h3>
+                <p className="mt-1 text-[11px] uppercase tracking-widest text-abyss-300">
+                  {el.trait}
+                </p>
+                <p className="mt-3 min-h-10 text-sm text-abyss-200">
+                  {el.desc}
+                </p>
+
+                <div className="mt-4 flex w-full flex-col gap-1.5 text-xs">
+                  <span className="el-chip rounded-full px-3 py-1.5 text-cream">
+                    ⚔️ Mengalahkan {byKey[el.beats].name}
+                  </span>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-abyss-300">
+                    🛡️ Lemah vs {byKey[el.beatenBy].name}
+                  </span>
+                </div>
+
+                <span
+                  className="mt-5 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors"
+                  style={{
+                    borderColor: isSelected
+                      ? el.color
+                      : "rgba(255,255,255,0.25)",
+                  }}
+                  aria-hidden="true"
+                >
+                  {isSelected && (
