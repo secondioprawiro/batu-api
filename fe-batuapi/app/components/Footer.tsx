@@ -32,3 +32,36 @@ export default function Footer() {
               alt="Logo Batu Api"
               width={40}
               height={40}
+              className="h-10 w-10 object-contain drop-shadow-[0_0_10px_rgba(255,138,30,0.35)]"
+            />
+            <span className="font-display text-xl tracking-wider text-cream">
+              BATU <span className="text-ember-400">API</span>
+            </span>
+          </a>
+          <p className="mt-4 max-w-xs text-sm text-abyss-300">
+            Web3 Element Battle Game. Pilih elemenmu dan taklukkan arena
+            on-chain.
+          </p>
+          <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#fcff52]/30 bg-[#fcff52]/10 px-3.5 py-1.5 text-xs text-[#fcff52]">
+            <span className="h-2 w-2 rounded-full bg-[#fcff52]" />
+            Built on Celo
+          </span>
+        </div>
+
+        <div>
+          <h4 className="font-display text-sm tracking-[0.25em] text-abyss-200">
+            MENU
+          </h4>
+          <ul className="mt-4 grid grid-cols-2 gap-2 text-sm text-abyss-300 sm:grid-cols-1">
+            {FOOTER_LINKS.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="transition-colors hover:text-ember-300"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
