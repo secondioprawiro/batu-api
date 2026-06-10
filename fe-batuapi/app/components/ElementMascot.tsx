@@ -207,3 +207,36 @@ function Daun({ id }: { id: string }) {
       <Eyes
         eyes={[
           { cx: 48, cy: 58, rx: 9.5, ry: 11.5, px: 2, py: -1 },
+          { cx: 72, cy: 56, rx: 10.5, ry: 12.5, px: 2, py: 2 },
+        ]}
+      />
+      <Mouth points="48,82 54,77 60,82 66,77 72,82" color="#1c5e31" />
+    </>
+  );
+}
+
+const BODIES: Record<ElementKey, (props: { id: string }) => React.ReactNode> = {
+  batu: Batu,
+  api: Api,
+  air: Air,
+  daun: Daun,
+};
+
+export default function ElementMascot({
+  element,
+  className,
+  idPrefix,
+}: MascotProps) {
+  const id = idPrefix ?? element;
+  const Body = BODIES[element];
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      className={className}
+      role="img"
+      aria-label={`Maskot elemen ${element}`}
+    >
+      <Body id={id} />
+    </svg>
+  );
+}
