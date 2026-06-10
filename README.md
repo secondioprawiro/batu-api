@@ -28,6 +28,7 @@
 9. [Token Economy](#9--token-economy)
 10. [Sistem Reward Battle](#10--sistem-reward-battle)
 11. [Mode Game](#11--mode-game)
+12. [Frontend & Demo App](#12--frontend--demo-app)
 
 ---
 
@@ -318,6 +319,49 @@ Mode paling sederhana untuk **MVP**:
 ### 11.2 Player vs Player *(pengembangan selanjutnya)*
 
 Mode pertarungan antar pemain — sebagaimana disinggung pada [Ringkasan Proyek](#1--ringkasan-proyek) — direncanakan sebagai pengembangan tahap berikutnya. Detail mekanismenya belum ditetapkan dan akan didokumentasikan saat mode ini dirancang.
+
+---
+
+## 12. 🖥️ Frontend & Demo App
+
+Frontend Batu Api sudah dibangun di folder [`fe-batuapi/`](fe-batuapi/) dan **dapat dimainkan dalam mode demo** sementara smart contract masih dikembangkan.
+
+### Tech Stack
+
+| Teknologi | Keterangan |
+|---|---|
+| **Next.js 16** (App Router) | Framework React + TypeScript |
+| **Tailwind CSS v4** | Styling tema dark fantasy |
+| **SVG custom** | Maskot 4 elemen bermata googly |
+
+### Cara Menjalankan
+
+```bash
+cd fe-batuapi
+npm install
+npm run dev
+# buka http://localhost:3000
+```
+
+### Halaman
+
+| Route | Isi |
+|---|---|
+| `/` | Landing page: hero, game flow, pemilihan elemen, aturan battle, kalkulator deposit, rewards, roadmap |
+| `/play` | **Arena demo yang playable**: connect wallet (dummy), deposit & withdraw, battle vs sistem, riwayat battle |
+
+### Mode Demo
+
+Selama smart contract belum siap, seluruh logika game berjalan di sisi browser:
+
+- **Wallet demo** — tidak memerlukan wallet asli; saldo awal simulasi 10 CELO.
+- **Deposit & withdraw** mengikuti rasio tetap `1 CELO = 1000 API` (minimal deposit 0.001 CELO).
+- **Battle vs sistem** bergaya roda putar: saat FIGHT ditekan, elemen sistem berganti cepat dan terkunci ketika pemain menekan **STOP**. Skema reward memakai **Opsi 1 — Fixed Reward** (menang menerima 1.8× bet) yang dibayarkan dari **reward pool (Opsi 3)**; kalah, bet masuk pool; seri, bet dikembalikan.
+- **Pasangan netral** — matchup yang tidak didefinisikan aturan (Api vs Batu, Air vs Daun) dihitung **seri**.
+- **Element Streak Bonus** — bonus 0.5× bet setiap 3 kemenangan beruntun dengan elemen yang sama.
+- Saldo, pool, dan riwayat battle tersimpan di `localStorage` browser (tersedia tombol **Reset** di arena).
+
+Saat smart contract selesai, lapisan simulasi ini tinggal diganti dengan koneksi wallet dan kontrak on-chain tanpa mengubah UI.
 
 ---
 
