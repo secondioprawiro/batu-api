@@ -148,3 +148,39 @@ export default function Hero() {
                       } as React.CSSProperties
                     }
                   >
+                    <div
+                      className="el-glow-bg animate-glow-pulse absolute -inset-5 opacity-40 blur-2xl"
+                      aria-hidden="true"
+                    />
+                    <ElementMascot
+                      element={el.key}
+                      idPrefix={`hero-${el.key}`}
+                      className={`relative w-full drop-shadow-[0_12px_22px_rgba(0,0,0,0.45)] ${stage.tilt}`}
+                    />
+                  </div>
+                  <div
+                    className="mt-4 h-3 w-4/5 rounded-[100%] bg-black/55 blur-[6px]"
+                    aria-hidden="true"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Curve divider menuju section berikutnya */}
+      <svg
+        className="absolute bottom-[-1px] left-0 w-full"
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M0 80 C360 130 720 10 1080 40 C1260 55 1380 70 1440 60 L1440 120 L0 120 Z"
+          fill="#061b1a"
+        />
+      </svg>
+    </section>
+  );
+}
