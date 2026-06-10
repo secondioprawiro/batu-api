@@ -228,3 +228,49 @@ export default function Arena() {
                 {chip.icon}{" "}
                 <span className="text-abyss-300">{chip.label}</span>{" "}
                 <strong>{chip.value}</strong>
+              </span>
+            ))}
+            {state.streakN > 0 && state.streakEl && (
+              <span className="rounded-full border border-ember-500/40 bg-ember-500/15 px-3 py-1.5 text-xs text-ember-300">
+                🔥 Streak {state.streakN}
+              </span>
+            )}
+            {state.connected && (
+              <>
+                <span className="hidden items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-300 sm:flex">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                  {DEMO_ADDRESS}
+                </span>
+                <button
+                  type="button"
+                  onClick={resetDemo}
+                  title="Reset demo"
+                  className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-abyss-300 transition-colors hover:border-ember-400/50 hover:text-ember-300"
+                >
+                  ↺ Reset
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Konten utama */}
+      <main className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-start gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_380px]">
+        <BattleStage
+          phase={phase}
+          result={result}
+          selected={selected}
+          onSelect={setSelected}
+          bet={bet}
+          onBetChange={setBet}
+          apiBalance={state.api}
+          spinElement={phase === "fighting" ? ELEMENTS[spinIndex].key : null}
+          onFight={fight}
+          onStop={stopFight}
+          onAgain={() => setPhase("idle")}
+        />
+        <div className="space-y-6">
+          <BankPanel
+            celo={state.celo}
+            api={state.api}
