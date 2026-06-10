@@ -36,3 +36,40 @@ export default function Hero() {
         {/* Bulan purnama */}
         <div className="moon absolute left-[5%] top-[7%] h-24 w-24 rounded-full opacity-90 sm:h-40 sm:w-40" />
 
+        {/* Kabut */}
+        <div className="animate-drift absolute -left-32 bottom-0 h-80 w-[42rem] rounded-full bg-abyss-600/15 blur-3xl" />
+        <div
+          className="animate-drift absolute -right-40 bottom-16 h-72 w-[38rem] rounded-full bg-abyss-400/10 blur-3xl"
+          style={{ animationDelay: "-11s" }}
+        />
+        <div className="absolute right-[10%] top-[12%] h-64 w-64 rounded-full bg-blood-800/40 blur-3xl" />
+
+        {/* Daun & sulur dekoratif */}
+        <span className="animate-float-slow absolute right-[4%] top-24 rotate-45 text-5xl opacity-30 blur-[1px] sm:text-6xl">
+          🍃
+        </span>
+        <span
+          className="animate-float-slow absolute left-[3%] top-[44%] -rotate-12 text-4xl opacity-25 blur-[1px] sm:text-5xl"
+          style={{ animationDelay: "1.4s" }}
+        >
+          🌿
+        </span>
+        <span
+          className="animate-float-slow absolute bottom-40 right-[8%] rotate-12 text-4xl opacity-25 blur-[1px]"
+          style={{ animationDelay: "2.8s" }}
+        >
+          🍂
+        </span>
+
+        {/* Partikel ember naik */}
+        {PARTICLES.map((p, i) => (
+          <span
+            key={i}
+            className="animate-rise absolute bottom-[-10px] rounded-full"
+            style={{
+              left: p.left,
+              width: p.size,
+              height: p.size,
+              background: p.color,
+              boxShadow: `0 0 ${p.size * 2.5}px ${p.color}`,
+              animationDelay: `${p.delay}s`,
