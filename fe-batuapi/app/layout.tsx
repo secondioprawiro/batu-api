@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   title: "Batu Api",
   description:
     "Pilih elemenmu — Batu, Api, Air, atau Daun. Pasang API Coin dan menangkan reward CELO di arena battle on-chain Batu Api.",
+  // Verifikasi kepemilikan proyek TalentApp (tertanam di <head>).
+  other: {
+    "talentapp:project_verification":
+      "cccf17401a14d7ce01fea09e6de5e84bd8a0fe48118f1e0b3c2f9d7a9d418f6912a4bef55e04c886640f5a38eb6e53b87eebd54db921954c3d3cf3ebdfda0bae",
+  },
 };
 
 export default function RootLayout({
