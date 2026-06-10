@@ -3,175 +3,428 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
+import {
+  useAccount,
+  useBalance,
+  useBlockNumber,
+  usePublicClient,
+  useReadContract,
+  useWriteContract,
+} from "wagmi";
+import {
+  BaseError,
+  ContractFunctionRevertedError,
+  bytesToHex,
+  formatUnits,
+  maxUint256,
+  parseEther,
+  parseEventLogs,
+  parseUnits,
+  type Hex,
+} from "viem";
 import { ELEMENTS, type ElementKey } from "@/app/lib/elements";
 import {
-  DEMO_ADDRESS,
-  INITIAL_STATE,
+  ELEMENT_INDEX,
   MIN_BET,
-  MIN_DEPOSIT,
-  RATE,
-  STORAGE_KEY,
-  STREAK_BONUS,
-  STREAK_EVERY,
-  WIN_PROFIT,
-  decideOutcome,
+  MIN_WITHDRAW,
+  REVEAL_WINDOW,
+  clearCommit,
+  elementFromIndex,
   fmt,
+  hashCommit,
   isElementKey,
-  type ArenaState,
+  loadCommit,
+  loadHistory,
+  outcomeFromIndex,
+  saveCommit,
+  saveHistory,
+  type BattleRecord,
   type FightResult,
 } from "@/app/lib/arena";
+import {
+  API_COIN_ADDRESS,
+  BATU_API_ADDRESS,
+  CELO_CHAIN_ID,
+  apiCoinAbi,
+  batuApiAbi,
+} from "@/app/lib/contracts";
 import BankPanel from "./BankPanel";
-import BattleStage from "./BattleStage";
+import BattleStage, { type Phase } from "./BattleStage";
 import HistoryPanel from "./HistoryPanel";
 
-type Phase = "idle" | "fighting" | "result";
+const ERROR_MESSAGES: Record<string, string> = {
+  ZeroAmount: "Jumlah tidak boleh nol.",
+  BetBelowMinimum: `Bet minimal ${MIN_BET} API.`,
+  InsufficientPool: "Reward pool tidak cukup untuk menampung bet sebesar ini.",
+  NothingToWithdraw: `Withdraw minimal ${fmt(MIN_WITHDRAW, 0)} API (1 CELO).`,
+  ActiveBattleExists: "Masih ada battle yang belum di-reveal. Selesaikan dulu.",
+  NoActiveBattle: "Tidak ada battle aktif.",
+  InvalidReveal: "Data reveal tidak cocok dengan commitment.",
+  RevealTooEarly: "Terlalu cepat — tunggu 1 block lagi lalu coba reveal ulang.",
+  RevealExpired: "Jendela reveal habis. Battle harus di-forfeit.",
+  NotYetExpired: "Battle belum kedaluwarsa — belum bisa forfeit.",
+};
 
-function loadInitialState(): ArenaState {
-  if (typeof window === "undefined") return INITIAL_STATE;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...INITIAL_STATE, ...(JSON.parse(raw) as Partial<ArenaState>) };
-  } catch {
-    /* state tersimpan korup — mulai dari awal */
+function humanizeError(error: unknown): string {
+  if (error instanceof BaseError) {
+    const revert = error.walk(
+      (e) => e instanceof ContractFunctionRevertedError,
+    );
+    if (revert instanceof ContractFunctionRevertedError) {
+      const name = revert.data?.errorName;
+      if (name && ERROR_MESSAGES[name]) return ERROR_MESSAGES[name];
+    }
+    if (error.shortMessage.includes("User rejected"))
+      return "Transaksi dibatalkan di wallet.";
+    return error.shortMessage;
   }
-  return INITIAL_STATE;
+  return error instanceof Error ? error.message : "Terjadi kesalahan.";
 }
 
 export default function Arena() {
   const params = useSearchParams();
   const fromQuery = params.get("element");
 
-  const [state, setState] = useState<ArenaState>(loadInitialState);
+  const { address, isConnected, chainId } = useAccount();
+  const { openConnectModal } = useConnectModal();
+  const publicClient = usePublicClient({ chainId: CELO_CHAIN_ID });
+  const { writeContractAsync } = useWriteContract();
+
   const [phase, setPhase] = useState<Phase>("idle");
   const [result, setResult] = useState<FightResult | null>(null);
   const [selected, setSelected] = useState<ElementKey>(
     isElementKey(fromQuery) ? fromQuery : "api",
   );
   const [bet, setBet] = useState("100");
-  /* Roda elemen sistem — berputar cepat selama fase fighting */
+  const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<BattleRecord[]>([]);
+  const [forfeiting, setForfeiting] = useState(false);
+
+  /* Roda elemen sistem — berputar selama transaksi battle berjalan */
   const [spinIndex, setSpinIndex] = useState(0);
-  const spinRef = useRef(0);
-  const intervalRef = useRef<number | null>(null);
-
-  /* Persist demo state ke localStorage */
-  useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
+  const busy =
+    phase === "approving" ||
+    phase === "committing" ||
+    phase === "waiting" ||
+    phase === "revealing";
 
   useEffect(() => {
-    return () => {
-      if (intervalRef.current !== null)
-        window.clearInterval(intervalRef.current);
-    };
-  }, []);
+    if (!busy) return;
+    const id = window.setInterval(
+      () => setSpinIndex((i) => (i + 1) % ELEMENTS.length),
+      90,
+    );
+    return () => window.clearInterval(id);
+  }, [busy]);
 
-  const stopSpinning = () => {
-    if (intervalRef.current !== null) {
-      window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
+  /* === Data on-chain === */
+  const wrongChain = isConnected && chainId !== CELO_CHAIN_ID;
+
+  const { data: celoBalance, refetch: refetchCelo } = useBalance({
+    address,
+    chainId: CELO_CHAIN_ID,
+    query: { enabled: !!address, refetchInterval: 10_000 },
+  });
+
+  const { data: apiBalanceWei, refetch: refetchApi } = useReadContract({
+    address: API_COIN_ADDRESS,
+    abi: apiCoinAbi,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+    chainId: CELO_CHAIN_ID,
+    query: { enabled: !!address, refetchInterval: 10_000 },
+  });
+
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
+    address: API_COIN_ADDRESS,
+    abi: apiCoinAbi,
+    functionName: "allowance",
+    args: address ? [address, BATU_API_ADDRESS] : undefined,
+    chainId: CELO_CHAIN_ID,
+    query: { enabled: !!address },
+  });
+
+  const { data: availablePool, refetch: refetchPool } = useReadContract({
+    address: BATU_API_ADDRESS,
+    abi: batuApiAbi,
+    functionName: "availablePool",
+    chainId: CELO_CHAIN_ID,
+    query: { refetchInterval: 10_000 },
+  });
+
+  const { data: pending, refetch: refetchPending } = useReadContract({
+    address: BATU_API_ADDRESS,
+    abi: batuApiAbi,
+    functionName: "pendingBattle",
+    args: address ? [address] : undefined,
+    chainId: CELO_CHAIN_ID,
+    query: { enabled: !!address, refetchInterval: 10_000 },
+  });
+
+  const { data: blockNumber } = useBlockNumber({
+    chainId: CELO_CHAIN_ID,
+    watch: true,
+  });
+
+  const refetchAll = () => {
+    refetchCelo();
+    refetchApi();
+    refetchAllowance();
+    refetchPool();
+    refetchPending();
+  };
+
+  const celo = celoBalance
+    ? Number(formatUnits(celoBalance.value, celoBalance.decimals))
+    : 0;
+  const api = apiBalanceWei ? Number(formatUnits(apiBalanceWei, 18)) : 0;
+  const pool = availablePool ? Number(formatUnits(availablePool, 18)) : 0;
+  /* Bet maksimum yang bisa ditanggung pool: liability menang = bet × 0.95
+   * harus ≤ availablePool → maxBet = pool × 100/95 (README: pool capacity).
+   * Infinity selama data pool belum termuat supaya tombol tidak terkunci palsu. */
+  const poolMaxBet =
+    availablePool !== undefined ? Math.floor((pool * 100) / 95) : Infinity;
+
+  /* Riwayat battle per wallet (hasil on-chain, cache lokal) —
+   * dimuat ulang saat wallet berganti (adjust-state-during-render) */
+  const [historyOwner, setHistoryOwner] = useState<string | undefined>();
+  if (historyOwner !== address) {
+    setHistoryOwner(address);
+    setHistory(address ? loadHistory(address) : []);
+  }
+
+  /* === Battle pending (commit belum di-reveal) === */
+  const [pendingBet, pendingCommitBlock, pendingActive, pendingHash] =
+    pending ?? [0n, 0n, false, "0x" as Hex];
+  const storedCommit =
+    address && pendingActive ? loadCommit(address) : null;
+  const commitMatches =
+    storedCommit !== null &&
+    storedCommit.commitHash.toLowerCase() ===
+      (pendingHash as string).toLowerCase();
+  const targetBlock = BigInt(pendingCommitBlock) + 1n;
+  const revealReady = blockNumber !== undefined && blockNumber > targetBlock;
+  const revealExpired =
+    blockNumber !== undefined && blockNumber > targetBlock + REVEAL_WINDOW;
+
+  /* === Aksi kontrak === */
+
+  const waitForBlockAfter = async (target: bigint) => {
+    if (!publicClient) throw new Error("RPC tidak tersedia.");
+    // revealBattle butuh block.number > commitBlock + 1 (Celo ±1 detik/block)
+    for (;;) {
+      const current = await publicClient.getBlockNumber({ cacheTime: 0 });
+      if (current > target) return;
+      await new Promise((r) => setTimeout(r, 1_000));
     }
   };
 
-  const connect = () => setState((s) => ({ ...s, connected: true }));
+  const doReveal = async (elementIndex: number, secret: Hex) => {
+    if (!address || !publicClient) return;
+    setPhase("revealing");
+    const txHash = await writeContractAsync({
+      address: BATU_API_ADDRESS,
+      abi: batuApiAbi,
+      functionName: "revealBattle",
+      args: [elementIndex, secret],
+      chainId: CELO_CHAIN_ID,
+    });
+    const receipt = await publicClient.waitForTransactionReceipt({
+      hash: txHash,
+    });
+    const [revealed] = parseEventLogs({
+      abi: batuApiAbi,
+      logs: receipt.logs,
+      eventName: "BattleRevealed",
+    });
+    if (!revealed) throw new Error("Event BattleRevealed tidak ditemukan.");
 
-  const resetDemo = () => {
-    stopSpinning();
-    setPhase("idle");
-    setResult(null);
-    setState({ ...INITIAL_STATE, connected: true });
-  };
-
-  const deposit = (amount: number): string | null => {
-    if (!Number.isFinite(amount) || amount <= 0)
-      return "Masukkan jumlah yang valid.";
-    if (amount < MIN_DEPOSIT) return `Minimal deposit ${MIN_DEPOSIT} CELO.`;
-    if (amount > state.celo) return "Saldo CELO tidak cukup.";
-    setState((s) => ({
-      ...s,
-      celo: s.celo - amount,
-      api: s.api + amount * RATE,
-    }));
-    return null;
-  };
-
-  const withdraw = (amount: number): string | null => {
-    if (!Number.isFinite(amount) || amount <= 0)
-      return "Masukkan jumlah yang valid.";
-    if (amount > state.api) return "Saldo API tidak cukup.";
-    setState((s) => ({
-      ...s,
-      api: s.api - amount,
-      celo: s.celo + amount / RATE,
-    }));
-    return null;
-  };
-
-  /* Mulai battle: roda elemen sistem berputar sampai pemain menekan STOP */
-  const fight = () => {
-    const betN = Math.floor(Number(bet));
-    if (phase === "fighting") return;
-    if (!Number.isFinite(betN) || betN < MIN_BET || betN > state.api) return;
-
-    setResult(null);
-    spinRef.current = Math.floor(Math.random() * ELEMENTS.length);
-    setSpinIndex(spinRef.current);
-    setPhase("fighting");
-    intervalRef.current = window.setInterval(() => {
-      spinRef.current = (spinRef.current + 1) % ELEMENTS.length;
-      setSpinIndex(spinRef.current);
-    }, 90);
-  };
-
-  /* STOP: elemen sistem terkunci di posisi roda saat ini, hasil dihitung */
-  const stopFight = () => {
-    if (phase !== "fighting") return;
-    stopSpinning();
-
-    const betN = Math.floor(Number(bet));
-    const system = ELEMENTS[spinRef.current].key;
-    const outcome = decideOutcome(selected, system);
-
-    let delta = 0;
-    let bonus = 0;
-    let { streakEl, streakN } = state;
-    if (outcome === "win") {
-      streakN = streakEl === selected ? streakN + 1 : 1;
-      streakEl = selected;
-      if (streakN % STREAK_EVERY === 0) bonus = Math.round(betN * STREAK_BONUS);
-      delta = Math.round(betN * WIN_PROFIT) + bonus;
-    } else if (outcome === "lose") {
-      delta = -betN;
-      streakN = 0;
-      streakEl = null;
-    }
-
+    const betApi = Number(formatUnits(revealed.args.bet, 18));
+    const payout = Number(formatUnits(revealed.args.payout, 18));
     const record: FightResult = {
-      player: selected,
-      system,
-      bet: betN,
-      outcome,
-      delta,
-      bonus,
+      player: elementFromIndex(revealed.args.playerElement),
+      system: elementFromIndex(revealed.args.systemElement),
+      bet: betApi,
+      outcome: outcomeFromIndex(revealed.args.outcome),
+      delta: payout - betApi,
+      txHash,
     };
 
-    setState((s) => ({
-      ...s,
-      api: s.api + delta,
-      pool: s.pool - delta,
-      streakEl,
-      streakN,
-      history: [{ id: Date.now(), ...record }, ...s.history].slice(0, 8),
-    }));
+    clearCommit(address);
     setResult(record);
     setPhase("result");
+    setHistory((h) => {
+      const next = [{ id: Date.now(), ...record }, ...h].slice(0, 8);
+      saveHistory(address, next);
+      return next;
+    });
+    refetchAll();
+  };
+
+  /* Mulai battle: approve (jika perlu) → commit → tunggu block → reveal */
+  const fight = async () => {
+    if (!address || !publicClient || busy) return;
+    if (wrongChain) {
+      setError("Pindah ke jaringan Celo dulu (lihat tombol wallet di atas).");
+      return;
+    }
+    const betN = Math.floor(Number(bet));
+    if (!Number.isFinite(betN) || betN < MIN_BET || betN > api) return;
+    if (betN > poolMaxBet) {
+      setError(
+        `Reward pool sedang rendah — bet maksimum saat ini ${fmt(poolMaxBet, 0)} API.`,
+      );
+      return;
+    }
+
+    setError(null);
+    setResult(null);
+    const betWei = parseUnits(String(betN), 18);
+
+    try {
+      /* Approve sekali (unlimited, sesuai panduan README kontrak) —
+       * battle berikutnya cukup 2 transaksi: commit + reveal. */
+      if ((allowance ?? 0n) < betWei) {
+        setPhase("approving");
+        const approveHash = await writeContractAsync({
+          address: API_COIN_ADDRESS,
+          abi: apiCoinAbi,
+          functionName: "approve",
+          args: [BATU_API_ADDRESS, maxUint256],
+          chainId: CELO_CHAIN_ID,
+        });
+        await publicClient.waitForTransactionReceipt({ hash: approveHash });
+        refetchAllowance();
+      }
+
+      /* Secret acak baru tiap battle; disimpan SEBELUM commit terkirim
+       * supaya refresh/error tidak menghilangkan kunci reveal. */
+      const secret = bytesToHex(crypto.getRandomValues(new Uint8Array(32)));
+      const elementIndex = ELEMENT_INDEX[selected];
+      const commitHash = hashCommit(address, elementIndex, secret);
+      saveCommit(address, {
+        secret,
+        elementIndex,
+        bet: betWei.toString(),
+        commitHash,
+      });
+
+      setPhase("committing");
+      const commitTx = await writeContractAsync({
+        address: BATU_API_ADDRESS,
+        abi: batuApiAbi,
+        functionName: "commitBattle",
+        args: [betWei, commitHash],
+        chainId: CELO_CHAIN_ID,
+      });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: commitTx,
+      });
+
+      setPhase("waiting");
+      await waitForBlockAfter(receipt.blockNumber + 1n);
+      await doReveal(elementIndex, secret);
+    } catch (err) {
+      setPhase("idle");
+      setError(humanizeError(err));
+      refetchAll();
+    }
+  };
+
+  /* Lanjutkan reveal untuk commit yang tersimpan (mis. setelah refresh) */
+  const resumeReveal = async () => {
+    if (!storedCommit || busy) return;
+    setError(null);
+    try {
+      setPhase("waiting");
+      await waitForBlockAfter(targetBlock);
+      await doReveal(storedCommit.elementIndex, storedCommit.secret);
+    } catch (err) {
+      setPhase("idle");
+      setError(humanizeError(err));
+      refetchAll();
+    }
+  };
+
+  /* Battle kedaluwarsa (atau secret hilang): selesaikan sebagai kalah */
+  const forfeit = async () => {
+    if (!address || !publicClient || forfeiting) return;
+    setError(null);
+    setForfeiting(true);
+    try {
+      const txHash = await writeContractAsync({
+        address: BATU_API_ADDRESS,
+        abi: batuApiAbi,
+        functionName: "forfeitExpired",
+        args: [address],
+        chainId: CELO_CHAIN_ID,
+      });
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      clearCommit(address);
+      refetchAll();
+    } catch (err) {
+      setError(humanizeError(err));
+    } finally {
+      setForfeiting(false);
+    }
+  };
+
+  const deposit = async (amount: number): Promise<string | null> => {
+    if (!address || !publicClient) return "Hubungkan wallet dulu.";
+    if (wrongChain) return "Pindah ke jaringan Celo dulu.";
+    if (!Number.isFinite(amount) || amount <= 0)
+      return "Masukkan jumlah yang valid.";
+    if (amount > celo) return "Saldo CELO tidak cukup.";
+    try {
+      const txHash = await writeContractAsync({
+        address: BATU_API_ADDRESS,
+        abi: batuApiAbi,
+        functionName: "deposit",
+        value: parseEther(String(amount)),
+        chainId: CELO_CHAIN_ID,
+      });
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      refetchAll();
+      return null;
+    } catch (err) {
+      return humanizeError(err);
+    }
+  };
+
+  const withdraw = async (amount: number): Promise<string | null> => {
+    if (!address || !publicClient) return "Hubungkan wallet dulu.";
+    if (wrongChain) return "Pindah ke jaringan Celo dulu.";
+    if (!Number.isFinite(amount) || amount <= 0)
+      return "Masukkan jumlah yang valid.";
+    if (amount < MIN_WITHDRAW)
+      return `Withdraw minimal ${fmt(MIN_WITHDRAW, 0)} API (= 1 CELO).`;
+    if (amount > api) return "Saldo API tidak cukup.";
+    try {
+      const txHash = await writeContractAsync({
+        address: BATU_API_ADDRESS,
+        abi: batuApiAbi,
+        functionName: "withdraw",
+        args: [parseUnits(String(Math.floor(amount)), 18)],
+        chainId: CELO_CHAIN_ID,
+      });
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      refetchAll();
+      return null;
+    } catch (err) {
+      return humanizeError(err);
+    }
   };
 
   const hudChips = [
-    { icon: "🟡", label: "CELO", value: fmt(state.celo) },
-    { icon: "🔥", label: "API", value: fmt(state.api, 0) },
-    { icon: "🏺", label: "Pool", value: fmt(state.pool, 0) },
+    { icon: "🟡", label: "CELO", value: fmt(celo) },
+    { icon: "🔥", label: "API", value: fmt(api, 0) },
+    { icon: "🏺", label: "Pool", value: fmt(pool, 0) },
   ];
+
+  /* Banner battle pending hanya saat tidak sedang dalam alur battle aktif */
+  const showPendingBanner = pendingActive && !busy && phase !== "result";
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-gradient-to-b from-blood-950 via-abyss-950 to-night">
@@ -193,10 +446,10 @@ export default function Arena() {
         </span>
       </div>
 
-      {/* Strip mode demo */}
+      {/* Strip jaringan */}
       <p className="relative z-10 border-b border-ember-500/20 bg-ember-500/10 px-4 py-2 text-center text-xs text-ember-300">
-        🔧 MODE DEMO — smart contract sedang dikembangkan; semua saldo &amp;
-        battle disimulasikan di browser-mu.
+        ⛓️ LIVE di Celo mainnet — battle memakai commit–reveal on-chain;
+        menang dibayar 1.95× bet dari reward pool.
       </p>
 
       {/* HUD */}
@@ -220,70 +473,115 @@ export default function Arena() {
           </Link>
 
           <div className="flex flex-wrap items-center gap-2">
-            {hudChips.map((chip) => (
-              <span
-                key={chip.label}
-                className="glass rounded-full border border-white/10 px-3 py-1.5 text-xs text-cream"
-              >
-                {chip.icon}{" "}
-                <span className="text-abyss-300">{chip.label}</span>{" "}
-                <strong>{chip.value}</strong>
-              </span>
-            ))}
-            {state.streakN > 0 && state.streakEl && (
-              <span className="rounded-full border border-ember-500/40 bg-ember-500/15 px-3 py-1.5 text-xs text-ember-300">
-                🔥 Streak {state.streakN}
-              </span>
-            )}
-            {state.connected && (
-              <>
-                <span className="hidden items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-300 sm:flex">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                  {DEMO_ADDRESS}
-                </span>
-                <button
-                  type="button"
-                  onClick={resetDemo}
-                  title="Reset demo"
-                  className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-abyss-300 transition-colors hover:border-ember-400/50 hover:text-ember-300"
+            {isConnected &&
+              hudChips.map((chip) => (
+                <span
+                  key={chip.label}
+                  className="glass rounded-full border border-white/10 px-3 py-1.5 text-xs text-cream"
                 >
-                  ↺ Reset
-                </button>
-              </>
-            )}
+                  {chip.icon}{" "}
+                  <span className="text-abyss-300">{chip.label}</span>{" "}
+                  <strong>{chip.value}</strong>
+                </span>
+              ))}
+            <ConnectButton
+              showBalance={false}
+              chainStatus="icon"
+              accountStatus="address"
+            />
           </div>
         </div>
       </header>
 
       {/* Konten utama */}
       <main className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-start gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_380px]">
-        <BattleStage
-          phase={phase}
-          result={result}
-          selected={selected}
-          onSelect={setSelected}
-          bet={bet}
-          onBetChange={setBet}
-          apiBalance={state.api}
-          spinElement={phase === "fighting" ? ELEMENTS[spinIndex].key : null}
-          onFight={fight}
-          onStop={stopFight}
-          onAgain={() => setPhase("idle")}
-        />
+        <div className="space-y-4">
+          {showPendingBanner && (
+            <div className="rounded-2xl border border-ember-500/40 bg-ember-500/10 p-4 text-sm text-ember-200">
+              <p className="font-semibold">
+                ⏳ Ada battle yang belum di-reveal (bet{" "}
+                {fmt(Number(formatUnits(pendingBet, 18)), 0)} API).
+              </p>
+              {commitMatches && !revealExpired && (
+                <>
+                  <p className="mt-1 text-ember-300/90">
+                    {revealReady
+                      ? "Block hash sudah tersedia — reveal sekarang untuk melihat hasilnya."
+                      : "Menunggu 1 block lagi sebelum bisa reveal."}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={resumeReveal}
+                    className="btn-ember font-display mt-3 rounded-full px-6 py-2 text-sm tracking-wider"
+                  >
+                    🔓 LANJUTKAN REVEAL
+                  </button>
+                </>
+              )}
+              {!commitMatches && !revealExpired && (
+                <p className="mt-1 text-ember-300/90">
+                  Secret battle ini tidak ditemukan di browser ini (mungkin
+                  di-commit dari perangkat lain). Tanpa secret, battle hanya
+                  bisa diselesaikan lewat forfeit setelah ±256 block.
+                </p>
+              )}
+              {revealExpired && (
+                <>
+                  <p className="mt-1 text-ember-300/90">
+                    Jendela reveal sudah lewat. Forfeit untuk membuka arena
+                    lagi (bet hangus ke pool).
+                  </p>
+                  <button
+                    type="button"
+                    onClick={forfeit}
+                    disabled={forfeiting}
+                    className="font-display mt-3 rounded-full border border-red-400/50 bg-red-500/10 px-6 py-2 text-sm tracking-wider text-red-300 disabled:opacity-50"
+                  >
+                    {forfeiting ? "MEMPROSES…" : "💀 FORFEIT"}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {error && (
+            <p className="rounded-2xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-300">
+              ⚠️ {error}
+            </p>
+          )}
+
+          <BattleStage
+            phase={phase}
+            result={result}
+            selected={selected}
+            onSelect={setSelected}
+            bet={bet}
+            onBetChange={setBet}
+            apiBalance={api}
+            poolMaxBet={poolMaxBet}
+            spinElement={busy ? ELEMENTS[spinIndex].key : null}
+            onFight={fight}
+            onAgain={() => {
+              setResult(null);
+              setPhase("idle");
+            }}
+            disabled={pendingActive}
+          />
+        </div>
         <div className="space-y-6">
           <BankPanel
-            celo={state.celo}
-            api={state.api}
-            busy={phase === "fighting"}
+            celo={celo}
+            api={api}
+            busy={busy}
             onDeposit={deposit}
             onWithdraw={withdraw}
           />
-          <HistoryPanel history={state.history} />
+          <HistoryPanel history={history} />
         </div>
       </main>
 
       {/* Overlay connect wallet */}
-      {!state.connected && (
+      {!isConnected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/70 p-4 backdrop-blur-md">
           <div className="stitched w-full max-w-sm rounded-3xl bg-abyss-900/95 p-8 text-center shadow-2xl">
             <Image
@@ -297,12 +595,12 @@ export default function Arena() {
               MASUK ARENA
             </h1>
             <p className="mt-3 text-sm text-abyss-300">
-              Hubungkan wallet untuk mulai battle. Ini wallet demo — tidak
-              perlu wallet asli.
+              Hubungkan wallet Celo-mu untuk mulai battle on-chain. Deposit
+              CELO, terima API Coin, dan lawan sistem.
             </p>
             <button
               type="button"
-              onClick={connect}
+              onClick={openConnectModal}
               className="btn-ember font-display mt-6 w-full rounded-2xl py-3.5 text-lg tracking-wider transition-transform hover:-translate-y-0.5"
             >
               CONNECT WALLET
