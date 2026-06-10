@@ -73,3 +73,41 @@ export default function Hero() {
               background: p.color,
               boxShadow: `0 0 ${p.size * 2.5}px ${p.color}`,
               animationDelay: `${p.delay}s`,
+              animationDuration: `${p.dur}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* === Konten utama === */}
+      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-4 text-center">
+        <span className="rounded-full border border-ember-400/40 bg-ember-500/10 px-4 py-1.5 text-[11px] font-semibold tracking-[0.35em] text-ember-300 sm:text-xs">
+          WEB3 ELEMENT BATTLE GAME
+        </span>
+
+        <h1 className="font-display title-hero mt-7 text-6xl leading-none tracking-wide sm:text-8xl lg:text-9xl">
+          BATU API
+        </h1>
+        <p className="font-display mt-3 text-xl tracking-[0.2em] text-abyss-200 sm:text-2xl md:text-3xl">
+          ~ BATTLE OF ELEMENTS ~
+        </p>
+
+        <p className="mt-6 max-w-2xl text-base text-abyss-200/90 md:text-lg">
+          Pilih elemenmu, pasang API Coin, dan menangkan reward CELO di arena
+          Batu Api.
+        </p>
+
+        <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/play"
+            className="btn-ember font-display rounded-full px-8 py-4 text-lg tracking-wider transition-transform hover:-translate-y-1"
+          >
+            ⚔️ START BATTLE
+          </Link>
+          <a
+            href="#battle"
+            className="glass font-display rounded-full border border-abyss-300/40 px-8 py-4 text-lg tracking-wider text-abyss-200 transition-colors hover:border-ember-400/60 hover:text-ember-300"
+          >
+            READ RULES
+          </a>
+        </div>
