@@ -1,4 +1,5 @@
 import { EMOJI, fmt, type BattleRecord } from "@/app/lib/arena";
+import { EXPLORER_URL } from "@/app/lib/contracts";
 
 const OUTCOME_LABEL = {
   win: { text: "MENANG", className: "text-emerald-300" },
@@ -25,33 +26,37 @@ export default function HistoryPanel({
           {history.map((record) => {
             const outcome = OUTCOME_LABEL[record.outcome];
             return (
-              <li
-                key={record.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-night/50 px-3 py-2.5 text-sm"
-              >
-                <span className="text-base">
-                  {EMOJI[record.player]}{" "}
-                  <span className="text-xs text-abyss-300">vs</span>{" "}
-                  {EMOJI[record.system]}
-                </span>
-                <span
-                  className={`font-display text-xs tracking-wider ${outcome.className}`}
+              <li key={record.id}>
+                <a
+                  href={`${EXPLORER_URL}/tx/${record.txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Lihat transaksi di Blockscout"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-night/50 px-3 py-2.5 text-sm transition-colors hover:border-ember-400/40"
                 >
-                  {outcome.text}
-                </span>
-                <span
-                  className={`font-semibold ${
-                    record.delta > 0
-                      ? "text-emerald-300"
-                      : record.delta < 0
-                        ? "text-red-300"
-                        : "text-abyss-300"
-                  }`}
-                >
-                  {record.delta > 0 ? "+" : ""}
-                  {fmt(record.delta, 0)} API
-                  {record.bonus > 0 && " ⚡"}
-                </span>
+                  <span className="text-base">
+                    {EMOJI[record.player]}{" "}
+                    <span className="text-xs text-abyss-300">vs</span>{" "}
+                    {EMOJI[record.system]}
+                  </span>
+                  <span
+                    className={`font-display text-xs tracking-wider ${outcome.className}`}
+                  >
+                    {outcome.text}
+                  </span>
+                  <span
+                    className={`font-semibold ${
+                      record.delta > 0
+                        ? "text-emerald-300"
+                        : record.delta < 0
+                          ? "text-red-300"
+                          : "text-abyss-300"
+                    }`}
+                  >
+                    {record.delta > 0 ? "+" : ""}
+                    {fmt(record.delta, 2)} API
+                  </span>
+                </a>
               </li>
             );
           })}
