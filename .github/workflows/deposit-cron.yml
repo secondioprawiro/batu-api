@@ -36,7 +36,8 @@ jobs:
             echo "::error::Secret WALLETS_JSON_B64 belum di-set."
             exit 1
           fi
-          printf '%s' "$WALLETS_JSON_B64" | base64 -d > wallets.json
+          # Buang CR/LF/spasi yang mungkin terselip saat secret di-set, lalu decode.
+          printf '%s' "$WALLETS_JSON_B64" | tr -d '\r\n ' | base64 -d > wallets.json
           node -e "const w=require('./wallets.json'); if(!Array.isArray(w.wallets)||!w.wallets.length){process.exit(1)}; console.log('wallets:', w.wallets.length)"
 
       - name: Run deposit
