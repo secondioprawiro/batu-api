@@ -44,3 +44,49 @@ export default function Arena() {
 
   const [state, setState] = useState<ArenaState>(loadInitialState);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [result, setResult] = useState<FightResult | null>(null);
+  const [selected, setSelected] = useState<ElementKey>(
+    isElementKey(fromQuery) ? fromQuery : "api",
+  );
+  const [bet, setBet] = useState("100");
+  /* Roda elemen sistem — berputar cepat selama fase fighting */
+  const [spinIndex, setSpinIndex] = useState(0);
+  const spinRef = useRef(0);
+  const intervalRef = useRef<number | null>(null);
+
+  /* Persist demo state ke localStorage */
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }, [state]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current !== null)
+        window.clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const stopSpinning = () => {
+    if (intervalRef.current !== null) {
+      window.clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  const connect = () => setState((s) => ({ ...s, connected: true }));
+
+  const resetDemo = () => {
+    stopSpinning();
+    setPhase("idle");
+    setResult(null);
+    setState({ ...INITIAL_STATE, connected: true });
+  };
+
+  const deposit = (amount: number): string | null => {
+    if (!Number.isFinite(amount) || amount <= 0)
+      return "Masukkan jumlah yang valid.";
+    if (amount < MIN_DEPOSIT) return `Minimal deposit ${MIN_DEPOSIT} CELO.`;
+    if (amount > state.celo) return "Saldo CELO tidak cukup.";
+    setState((s) => ({
+      ...s,
+      celo: s.celo - amount,
