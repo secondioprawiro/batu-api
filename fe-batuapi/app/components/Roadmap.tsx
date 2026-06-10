@@ -71,3 +71,38 @@ export default function Roadmap() {
               <Reveal key={phase.n} delay={i * 100}>
                 <div className="relative flex flex-col items-center text-center">
                   <div
+                    className={`flex h-14 w-14 items-center justify-center rounded-full border-2 bg-abyss-800 text-xl ${
+                      phase.active
+                        ? "border-ember-500 shadow-[0_0_24px_-4px_rgba(255,138,30,0.6)]"
+                        : "border-abyss-600"
+                    }`}
+                  >
+                    {phase.icon}
+                  </div>
+                  <p className="font-display mt-4 text-sm tracking-widest text-ember-400">
+                    PHASE {phase.n}
+                  </p>
+                  <h3 className="font-display mt-1 text-base tracking-wide text-cream">
+                    {phase.title}
+                  </h3>
+                  <p className="mt-1.5 max-w-[200px] text-xs text-abyss-300">
+                    {phase.desc}
+                  </p>
+                  <span
+                    className={`mt-3 rounded-full border px-3 py-1 text-[10px] uppercase tracking-widest ${
+                      phase.active
+                        ? "border-ember-500/30 bg-ember-500/15 text-ember-300"
+                        : "border-white/10 bg-white/5 text-abyss-300"
+                    }`}
+                  >
+                    {phase.active ? "Sedang Berjalan" : "Segera"}
+                  </span>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
