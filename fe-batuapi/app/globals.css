@@ -109,3 +109,40 @@
   75% {
     transform: translate(4px, -2px) rotate(3deg);
   }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-night);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: rgba(255, 138, 30, 0.5);
+  color: #fff7ea;
+}
+
+/* === Hero === */
+
+.hero-bg {
+  background: linear-gradient(
+    180deg,
+    #2c0e1e 0%,
+    #1c0f20 32%,
+    #0a2b29 78%,
+    #061b1a 100%
