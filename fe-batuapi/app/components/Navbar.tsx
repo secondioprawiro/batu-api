@@ -31,3 +31,36 @@ export default function Navbar() {
           />
           <span className="font-display text-xl tracking-wider text-cream">
             BATU <span className="text-ember-400">API</span>
+          </span>
+        </a>
+
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Utama">
+          {LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm text-abyss-200 transition-colors hover:text-ember-300"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setConnected((c) => !c)}
+            className="hidden items-center gap-2 rounded-full border border-ember-500/40 px-4 py-2 text-sm text-cream transition-colors hover:bg-ember-500/10 sm:inline-flex"
+          >
+            {connected ? (
+              <>
+                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                0x71C…9A4F
+              </>
+            ) : (
+              "Connect Wallet"
+            )}
+          </button>
+          <Link
+            href="/play"
+            className="btn-ember font-display hidden rounded-full px-5 py-2 text-sm tracking-wider transition-transform hover:-translate-y-0.5 sm:inline-block"
