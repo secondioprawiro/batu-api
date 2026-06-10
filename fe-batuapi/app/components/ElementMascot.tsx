@@ -172,3 +172,38 @@ function Air({ id }: { id: string }) {
         ]}
       />
       <Mouth points="48,87 54,82 60,87 66,82 72,87" color="#0e4d73" />
+    </>
+  );
+}
+
+function Daun({ id }: { id: string }) {
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${id}-g`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#b4ef96" />
+          <stop offset="55%" stopColor="#66cb6b" />
+          <stop offset="100%" stopColor="#2f9148" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M60 10 C57 4 52 1 46 3"
+        stroke="#2f9148"
+        strokeWidth="5"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M60 8 C86 26 98 54 92 78 C87 98 74 108 60 110 C46 108 33 98 28 78 C22 54 34 26 60 8 Z"
+        fill={`url(#${id}-g)`}
+      />
+      <g stroke="#1f7a39" strokeWidth="3" opacity="0.5" strokeLinecap="round">
+        <path d="M60 24 L60 98" />
+        <path d="M60 44 L76 54" />
+        <path d="M60 44 L44 54" />
+        <path d="M60 66 L78 76" />
+        <path d="M60 66 L42 76" />
+      </g>
+      <Eyes
+        eyes={[
+          { cx: 48, cy: 58, rx: 9.5, ry: 11.5, px: 2, py: -1 },
