@@ -183,3 +183,40 @@ body {
 }
 
 .text-glow-ember {
+  text-shadow:
+    0 0 22px rgba(255, 138, 30, 0.55),
+    0 2px 0 rgba(40, 10, 4, 0.8);
+}
+
+.text-glow-soft {
+  text-shadow:
+    0 0 30px rgba(255, 170, 60, 0.18),
+    0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.btn-ember {
+  background: linear-gradient(180deg, #ffc56e 0%, #ff8a1e 55%, #ef6c12 100%);
+  color: #3a1404;
+  box-shadow:
+    0 10px 30px -8px rgba(255, 138, 30, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* === Element theming (consumes --el set inline per element) === */
+
+.el-glow-bg {
+  background: radial-gradient(circle at 50% 45%, var(--el), transparent 70%);
+}
+
+.el-text {
+  color: var(--el);
+}
+
+.el-chip {
+  background: color-mix(in srgb, var(--el) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--el) 38%, transparent);
+}
+
+.el-card-selected {
+  border-color: var(--el) !important;
+  box-shadow:
