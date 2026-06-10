@@ -64,3 +64,36 @@ export default function Navbar() {
           <Link
             href="/play"
             className="btn-ember font-display hidden rounded-full px-5 py-2 text-sm tracking-wider transition-transform hover:-translate-y-0.5 sm:inline-block"
+          >
+            PLAY NOW
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-cream lg:hidden"
+            aria-label={menuOpen ? "Tutup menu" : "Buka menu"}
+            aria-expanded={menuOpen}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              {menuOpen ? (
+                <path d="M6 6l12 12M18 6L6 18" />
+              ) : (
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {menuOpen && (
+        <div className="glass border-b border-white/5 px-4 pb-5 pt-2 lg:hidden">
+          <nav className="flex flex-col gap-1" aria-label="Utama (mobile)">
+            {LINKS.map((link) => (
