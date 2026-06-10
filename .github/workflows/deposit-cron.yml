@@ -4,7 +4,8 @@ name: BatuApi Deposit Cron
 # 4x/hari (UTC). Bisa juga dipicu manual dari tab Actions (Run workflow).
 on:
   schedule:
-    - cron: "0 0,6,12,18 * * *" # 00:00 06:00 12:00 18:00 UTC
+    # 00:00 06:00 12:00 18:00 WIB (UTC+7) = 17:00 23:00 05:00 11:00 UTC
+    - cron: "0 5,11,17,23 * * *"
   workflow_dispatch: {}
 
 # Jangan biarkan dua run bertumpuk (nonce wallet bisa bentrok).
