@@ -137,3 +137,38 @@ function Api({ id }: { id: string }) {
         ]}
       />
       <Mouth points="50,81 55,76 60,81 65,76 70,81" color="#8a3413" />
+    </>
+  );
+}
+
+function Air({ id }: { id: string }) {
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${id}-g`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#b9ecff" />
+          <stop offset="55%" stopColor="#54c6ff" />
+          <stop offset="100%" stopColor="#1f8fd1" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M60 8 C70 28 94 48 94 72 C94 92 79 106 60 106 C41 106 26 92 26 72 C26 48 50 28 60 8 Z"
+        fill={`url(#${id}-g)`}
+      />
+      <ellipse
+        cx="42"
+        cy="48"
+        rx="6.5"
+        ry="13"
+        fill="#ffffff"
+        opacity="0.45"
+        transform="rotate(-22 42 48)"
+      />
+      <circle cx="78" cy="44" r="3.2" fill="#ffffff" opacity="0.5" />
+      <Eyes
+        eyes={[
+          { cx: 48, cy: 66, rx: 9.5, ry: 11.5, px: -3, py: -2 },
+          { cx: 72, cy: 64, rx: 10.5, ry: 12.5, px: -1, py: -3 },
+        ]}
+      />
+      <Mouth points="48,87 54,82 60,87 66,82 72,87" color="#0e4d73" />
