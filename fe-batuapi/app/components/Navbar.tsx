@@ -97,3 +97,34 @@ export default function Navbar() {
         <div className="glass border-b border-white/5 px-4 pb-5 pt-2 lg:hidden">
           <nav className="flex flex-col gap-1" aria-label="Utama (mobile)">
             {LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="rounded-xl px-3 py-2.5 text-sm text-abyss-200 transition-colors hover:bg-white/5 hover:text-ember-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          <div className="mt-3 flex gap-3">
+            <button
+              type="button"
+              onClick={() => setConnected((c) => !c)}
+              className="flex-1 rounded-full border border-ember-500/40 px-4 py-2.5 text-sm text-cream"
+            >
+              {connected ? "0x71C…9A4F" : "Connect Wallet"}
+            </button>
+            <Link
+              href="/play"
+              onClick={() => setMenuOpen(false)}
+              className="btn-ember font-display flex-1 rounded-full px-4 py-2.5 text-center text-sm tracking-wider"
+            >
+              PLAY NOW
+            </Link>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
