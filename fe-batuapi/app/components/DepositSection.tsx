@@ -124,3 +124,44 @@ export default function DepositSection() {
           </div>
 
           <div className="my-4 flex justify-center">
+            <span className="btn-ember flex h-10 w-10 items-center justify-center rounded-full text-lg">
+              ↓
+            </span>
+          </div>
+
+          <p className="text-xs uppercase tracking-widest text-abyss-300">
+            Kamu menerima
+          </p>
+          <div className="mt-2 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-night/70 p-4">
+            <span className="font-display text-2xl tracking-wide text-ember-300">
+              {formattedApi}
+            </span>
+            <span className="flex shrink-0 items-center gap-2 rounded-full border border-ember-500/30 bg-ember-500/10 px-3 py-1.5 text-sm text-cream">
+              🔥 API
+            </span>
+          </div>
+
+          {belowMin && (
+            <p className="mt-3 text-xs text-red-300">
+              ⚠️ Minimal deposit {MIN_DEPOSIT} CELO.
+            </p>
+          )}
+
+          <p className="mt-4 text-center text-xs text-abyss-300">
+            Rasio tetap: 1 CELO = 1000 API · 1000 API = 1 CELO saat withdraw.
+          </p>
+
+          <button
+            type="button"
+            className="btn-ember font-display mt-5 w-full rounded-2xl py-4 text-lg tracking-wider transition-transform hover:-translate-y-0.5"
+          >
+            DEPOSIT SEKARANG
+          </button>
+          <p className="mt-3 text-center text-[11px] text-abyss-400">
+            UI demo — koneksi smart contract menyusul (Roadmap Phase 1).
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
