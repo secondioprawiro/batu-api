@@ -148,3 +148,53 @@ export default function BattleStage({
                   {byKey[result.system].name}
                 </span>
               </>
+            ) : fighting && spinElement ? (
+              <>
+                {/* Roda elemen — berganti cepat sampai pemain menekan STOP */}
+                <div
+                  className="mt-2 flex aspect-square w-full items-center justify-center rounded-2xl border-2 border-dashed border-ember-400/50 bg-abyss-800/60"
+                  style={
+                    { "--el": byKey[spinElement].color } as React.CSSProperties
+                  }
+                >
+                  <ElementMascot
+                    element={spinElement}
+                    idPrefix={`spin-${spinElement}`}
+                    className="w-3/4"
+                  />
+                </div>
+                <span className="font-display mt-2 animate-pulse tracking-wide text-ember-300">
+                  Memilih…
+                </span>
+              </>
+            ) : (
+              <>
+                <div className="mt-2 flex aspect-square w-full items-center justify-center rounded-2xl border-2 border-dashed border-abyss-300/30 bg-abyss-800/60">
+                  <span className="font-display text-4xl text-abyss-300 sm:text-6xl">
+                    ?
+                  </span>
+                </div>
+                <span className="font-display mt-2 tracking-wide text-abyss-300">
+                  Misteri
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Banner hasil */}
+        {phase === "result" && result && (
+          <div
+            className={`animate-pop relative mt-6 rounded-2xl border p-4 text-center ${RESULT_STYLE[result.outcome].box}`}
+          >
+            <p
+              className={`font-display text-2xl tracking-wide ${RESULT_STYLE[result.outcome].title}`}
+            >
+              {RESULT_STYLE[result.outcome].heading}
+            </p>
+            <p className="mt-1 text-sm text-abyss-200">
+              {result.outcome === "win" && (
+                <>
+                  {byKey[result.player].name} {byKey[result.player].verb}{" "}
+                  {byKey[result.system].name}! Profit{" "}
+                  <strong className="text-emerald-300">
