@@ -90,3 +90,49 @@ export default function Arena() {
     setState((s) => ({
       ...s,
       celo: s.celo - amount,
+      api: s.api + amount * RATE,
+    }));
+    return null;
+  };
+
+  const withdraw = (amount: number): string | null => {
+    if (!Number.isFinite(amount) || amount <= 0)
+      return "Masukkan jumlah yang valid.";
+    if (amount > state.api) return "Saldo API tidak cukup.";
+    setState((s) => ({
+      ...s,
+      api: s.api - amount,
+      celo: s.celo + amount / RATE,
+    }));
+    return null;
+  };
+
+  /* Mulai battle: roda elemen sistem berputar sampai pemain menekan STOP */
+  const fight = () => {
+    const betN = Math.floor(Number(bet));
+    if (phase === "fighting") return;
+    if (!Number.isFinite(betN) || betN < MIN_BET || betN > state.api) return;
+
+    setResult(null);
+    spinRef.current = Math.floor(Math.random() * ELEMENTS.length);
+    setSpinIndex(spinRef.current);
+    setPhase("fighting");
+    intervalRef.current = window.setInterval(() => {
+      spinRef.current = (spinRef.current + 1) % ELEMENTS.length;
+      setSpinIndex(spinRef.current);
+    }, 90);
+  };
+
+  /* STOP: elemen sistem terkunci di posisi roda saat ini, hasil dihitung */
+  const stopFight = () => {
+    if (phase !== "fighting") return;
+    stopSpinning();
+
+    const betN = Math.floor(Number(bet));
+    const system = ELEMENTS[spinRef.current].key;
+    const outcome = decideOutcome(selected, system);
+
+    let delta = 0;
+    let bonus = 0;
+    let { streakEl, streakN } = state;
+    if (outcome === "win") {
