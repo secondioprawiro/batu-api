@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccountEffect } from "wagmi";
 
 const LINKS = [
   { label: "Home", href: "#home" },
@@ -13,9 +16,66 @@ const LINKS = [
   { label: "Roadmap", href: "#roadmap" },
 ];
 
+/** Tombol wallet bergaya Batu Api di atas modal RainbowKit */
+function WalletButton({ className }: { className: string }) {
+  return (
+    <ConnectButton.Custom>
+      {({
+        account,
+        chain,
+        openAccountModal,
+        openChainModal,
+        openConnectModal,
+        mounted,
+      }) => {
+        const connected = mounted && account && chain;
+        if (!mounted)
+          return <button type="button" className={className} aria-hidden />;
+        if (!connected)
+          return (
+            <button
+              type="button"
+              onClick={openConnectModal}
+              className={className}
+            >
+              Connect Wallet
+            </button>
+          );
+        if (chain.unsupported)
+          return (
+            <button
+              type="button"
+              onClick={openChainModal}
+              className={`${className} !border-red-400/60 !text-red-300`}
+            >
+              Jaringan salah
+            </button>
+          );
+        return (
+          <button
+            type="button"
+            onClick={openAccountModal}
+            className={className}
+          >
+            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+            {account.displayName}
+          </button>
+        );
+      }}
+    </ConnectButton.Custom>
+  );
+}
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [connected, setConnected] = useState(false);
+  const router = useRouter();
+
+  /* Connect baru (bukan auto-reconnect saat halaman dimuat) → langsung masuk arena */
+  useAccountEffect({
+    onConnect({ isReconnected }) {
+      if (!isReconnected) router.push("/play");
+    },
+  });
 
   return (
     <header className="glass sticky top-0 z-50 border-b border-white/5">
@@ -47,20 +107,7 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setConnected((c) => !c)}
-            className="hidden items-center gap-2 rounded-full border border-ember-500/40 px-4 py-2 text-sm text-cream transition-colors hover:bg-ember-500/10 sm:inline-flex"
-          >
-            {connected ? (
-              <>
-                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                0x71C…9A4F
-              </>
-            ) : (
-              "Connect Wallet"
-            )}
-          </button>
+          <WalletButton className="hidden items-center gap-2 rounded-full border border-ember-500/40 px-4 py-2 text-sm text-cream transition-colors hover:bg-ember-500/10 sm:inline-flex" />
           <Link
             href="/play"
             className="btn-ember font-display hidden rounded-full px-5 py-2 text-sm tracking-wider transition-transform hover:-translate-y-0.5 sm:inline-block"
@@ -108,13 +155,7 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="mt-3 flex gap-3">
-            <button
-              type="button"
-              onClick={() => setConnected((c) => !c)}
-              className="flex-1 rounded-full border border-ember-500/40 px-4 py-2.5 text-sm text-cream"
-            >
-              {connected ? "0x71C…9A4F" : "Connect Wallet"}
-            </button>
+            <WalletButton className="flex flex-1 items-center justify-center gap-2 rounded-full border border-ember-500/40 px-4 py-2.5 text-sm text-cream" />
             <Link
               href="/play"
               onClick={() => setMenuOpen(false)}
