@@ -129,8 +129,8 @@ export default function ElementCards() {
             MASUK ARENA DENGAN {chosen.name.toUpperCase()}
           </Link>
           <p className="mt-4 text-xs text-abyss-400">
-            Mode demo — battle on-chain hadir setelah smart contract siap
-            (Roadmap Phase 3).
+            Battle on-chain live di Celo mainnet — commit–reveal yang adil
+            dan terverifikasi.
           </p>
         </div>
       </div>
