@@ -111,3 +111,40 @@ export default function Hero() {
             READ RULES
           </a>
         </div>
+
+        <div className="mt-9 flex flex-wrap items-center justify-center gap-3 text-xs text-abyss-200">
+          {["🪙 1 CELO = 1000 API", "⚡ Min deposit 0.001 CELO", "🌕 Built on Celo"].map(
+            (chip) => (
+              <span
+                key={chip}
+                className="glass rounded-full border border-white/10 px-4 py-2"
+              >
+                {chip}
+              </span>
+            ),
+          )}
+        </div>
+
+        {/* === Panggung maskot elemen === */}
+        <div className="relative mt-16 w-full">
+          <div
+            className="absolute inset-x-0 bottom-0 mx-auto h-24 max-w-3xl rounded-[100%] bg-ember-500/10 blur-2xl"
+            aria-hidden="true"
+          />
+          <div className="relative flex items-end justify-center gap-3 sm:gap-8">
+            {MASCOT_STAGE.map((stage) => {
+              const el = ELEMENTS.find((e) => e.key === stage.key)!;
+              return (
+                <div
+                  key={el.key}
+                  className={`flex flex-col items-center ${stage.width}`}
+                >
+                  <div
+                    className="animate-float relative w-full"
+                    style={
+                      {
+                        animationDelay: stage.delay,
+                        "--el": el.color,
+                      } as React.CSSProperties
+                    }
+                  >
