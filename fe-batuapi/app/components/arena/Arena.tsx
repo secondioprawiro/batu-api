@@ -182,3 +182,49 @@ export default function Arena() {
           className="animate-drift absolute -right-40 bottom-10 h-80 w-[36rem] rounded-full bg-ember-500/5 blur-3xl"
           style={{ animationDelay: "-9s" }}
         />
+        <span className="animate-float-slow absolute right-[5%] top-32 rotate-12 text-5xl opacity-20 blur-[1px]">
+          🍃
+        </span>
+        <span
+          className="animate-float-slow absolute bottom-24 left-[3%] -rotate-12 text-4xl opacity-20 blur-[1px]"
+          style={{ animationDelay: "2s" }}
+        >
+          🌿
+        </span>
+      </div>
+
+      {/* Strip mode demo */}
+      <p className="relative z-10 border-b border-ember-500/20 bg-ember-500/10 px-4 py-2 text-center text-xs text-ember-300">
+        🔧 MODE DEMO — smart contract sedang dikembangkan; semua saldo &amp;
+        battle disimulasikan di browser-mu.
+      </p>
+
+      {/* HUD */}
+      <header className="glass relative z-10 border-b border-white/5">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image
+              src="/logo.png"
+              alt="Logo Batu Api"
+              width={36}
+              height={36}
+              priority
+              className="h-9 w-9 object-contain drop-shadow-[0_0_10px_rgba(255,138,30,0.35)]"
+            />
+            <span className="font-display text-lg tracking-wider text-cream">
+              BATU <span className="text-ember-400">API</span>
+            </span>
+            <span className="ml-1 hidden text-xs text-abyss-300 sm:inline">
+              ← kembali
+            </span>
+          </Link>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {hudChips.map((chip) => (
+              <span
+                key={chip.label}
+                className="glass rounded-full border border-white/10 px-3 py-1.5 text-xs text-cream"
+              >
+                {chip.icon}{" "}
+                <span className="text-abyss-300">{chip.label}</span>{" "}
+                <strong>{chip.value}</strong>
