@@ -40,3 +40,23 @@ export default function HistoryPanel({
                   {outcome.text}
                 </span>
                 <span
+                  className={`font-semibold ${
+                    record.delta > 0
+                      ? "text-emerald-300"
+                      : record.delta < 0
+                        ? "text-red-300"
+                        : "text-abyss-300"
+                  }`}
+                >
+                  {record.delta > 0 ? "+" : ""}
+                  {fmt(record.delta, 0)} API
+                  {record.bonus > 0 && " ⚡"}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
