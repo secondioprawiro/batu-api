@@ -98,3 +98,53 @@ export default function BattleStage({
               />
               <ElementMascot
                 element={selected}
+                idPrefix={`stage-${selected}`}
+                className={`relative w-full drop-shadow-[0_12px_22px_rgba(0,0,0,0.5)] ${
+                  fighting ? "animate-shake" : "animate-float"
+                }`}
+              />
+            </div>
+            <span
+              className="el-text font-display mt-2 tracking-wide"
+              style={{ "--el": chosen.color } as React.CSSProperties}
+            >
+              {chosen.name}
+            </span>
+          </div>
+
+          <span className="font-display text-glow-ember text-3xl text-ember-400 sm:text-5xl">
+            VS
+          </span>
+
+          {/* Sistem */}
+          <div className="flex w-28 flex-col items-center sm:w-40">
+            <span className="text-[10px] font-semibold tracking-[0.3em] text-abyss-300">
+              SISTEM
+            </span>
+            {phase === "result" && result ? (
+              <>
+                <div
+                  className="animate-pop relative mt-2 w-full"
+                  style={
+                    { "--el": byKey[result.system].color } as React.CSSProperties
+                  }
+                >
+                  <div
+                    className="el-glow-bg absolute -inset-4 opacity-40 blur-2xl"
+                    aria-hidden="true"
+                  />
+                  <ElementMascot
+                    element={result.system}
+                    idPrefix={`stage-sys-${result.system}`}
+                    className="relative w-full drop-shadow-[0_12px_22px_rgba(0,0,0,0.5)]"
+                  />
+                </div>
+                <span
+                  className="el-text font-display mt-2 tracking-wide"
+                  style={
+                    { "--el": byKey[result.system].color } as React.CSSProperties
+                  }
+                >
+                  {byKey[result.system].name}
+                </span>
+              </>
