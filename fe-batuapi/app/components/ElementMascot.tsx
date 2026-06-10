@@ -103,3 +103,37 @@ function Batu({ id }: { id: string }) {
         ]}
       />
       <Mouth points="47,82 53,76 59,82 65,76 71,82" color="#3c474e" />
+    </>
+  );
+}
+
+function Api({ id }: { id: string }) {
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${id}-g`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffc14d" />
+          <stop offset="55%" stopColor="#ff8a1e" />
+          <stop offset="100%" stopColor="#f4511e" />
+        </linearGradient>
+        <linearGradient id={`${id}-core`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#fff7c2" />
+          <stop offset="100%" stopColor="#ffd166" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M60 6 C62 18 72 24 78 34 C86 46 90 54 90 66 C90 87 77 102 60 104 C43 102 30 87 30 66 C30 54 34 46 42 34 C48 26 58 18 60 6 Z"
+        fill={`url(#${id}-g)`}
+      />
+      <path
+        d="M60 36 C64 46 74 52 74 66 C74 80 67 89 60 90 C53 89 46 80 46 66 C46 52 56 46 60 36 Z"
+        fill={`url(#${id}-core)`}
+        opacity="0.95"
+      />
+      <Eyes
+        eyes={[
+          { cx: 51, cy: 63, rx: 8.5, ry: 10.5, px: -2, py: 2 },
+          { cx: 69, cy: 61, rx: 9.5, ry: 11.5, px: 3, py: 1 },
+        ]}
+      />
+      <Mouth points="50,81 55,76 60,81 65,76 70,81" color="#8a3413" />
