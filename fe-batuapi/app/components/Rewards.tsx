@@ -22,14 +22,14 @@ const REWARDS = [
   },
   {
     icon: "🏆",
-    name: "Winner Bonus",
-    desc: "Bonus spesial untuk sang juara arena.",
+    name: "Payout 1.95×",
+    desc: "Setiap kemenangan dibayar 1.95× bet dari reward pool.",
     glow: "#ffc56e",
   },
   {
     icon: "⚡",
-    name: "Element Streak Bonus",
-    desc: "Menang beruntun dengan satu elemen? Bonus ekstra.",
+    name: "Provably Fair",
+    desc: "Commit–reveal on-chain — hasil tak bisa dicurangi siapa pun.",
     glow: "#4cc3ff",
   },
 ];
