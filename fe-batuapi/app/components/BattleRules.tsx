@@ -71,3 +71,40 @@ export default function BattleRules() {
                         element="air"
                         idPrefix="cycle-air-loop"
                         className="w-full"
+                      />
+                      <span className="font-display mt-1 text-sm tracking-wide text-abyss-300">
+                        Air
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-center text-sm text-abyss-300">
+              Tanda panah berarti <span className="text-ember-300">mengalahkan</span>{" "}
+              — siklusnya berputar tanpa ujung.
+            </p>
+          </div>
+        </Reveal>
+
+        {/* Kartu matchup */}
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {CYCLE.map((key, i) => {
+            const winner = byKey[key];
+            const loser = byKey[winner.beats];
+            return (
+              <Reveal key={key} delay={i * 100}>
+                <div
+                  className="flex items-center gap-4 rounded-2xl border border-white/5 bg-abyss-900/70 p-5 transition-colors hover:border-ember-500/30"
+                  style={{ "--el": winner.color } as React.CSSProperties}
+                >
+                  <div className="relative w-14 shrink-0 sm:w-16">
+                    <div
+                      className="el-glow-bg absolute -inset-2 opacity-40 blur-xl"
+                      aria-hidden="true"
+                    />
+                    <ElementMascot
+                      element={winner.key}
+                      idPrefix={`rule-${winner.key}`}
+                      className="relative w-full"
+                    />
