@@ -1,12 +1,26 @@
 "use client";
 
 import { ELEMENTS, byKey, type ElementKey } from "@/app/lib/elements";
-import { MIN_BET, STREAK_EVERY, fmt, type FightResult } from "@/app/lib/arena";
+import { MIN_BET, WIN_MULTIPLIER, fmt, type FightResult } from "@/app/lib/arena";
+import { EXPLORER_URL } from "@/app/lib/contracts";
 import ElementMascot from "../ElementMascot";
 
 const QUICK_BETS = [10, 50, 100, 500];
 
-type Phase = "idle" | "fighting" | "result";
+export type Phase =
+  | "idle"
+  | "approving"
+  | "committing"
+  | "waiting"
+  | "revealing"
+  | "result";
+
+const PHASE_STATUS: Record<Exclude<Phase, "idle" | "result">, string> = {
+  approving: "Menyetujui API Coin di wallet…",
+  committing: "Mengirim commitment battle ke Celo…",
+  waiting: "Menunggu block hash (sumber keacakan)…",
+  revealing: "Mengungkap elemen — menentukan hasil…",
+};
 
 type BattleStageProps = {
   phase: Phase;
@@ -16,11 +30,14 @@ type BattleStageProps = {
   bet: string;
   onBetChange: (value: string) => void;
   apiBalance: number;
-  /** Elemen yang sedang ditampilkan roda sistem selama fase fighting */
+  /** Bet maksimum yang bisa ditanggung reward pool saat ini */
+  poolMaxBet: number;
+  /** Elemen yang sedang ditampilkan roda sistem selama battle berjalan */
   spinElement: ElementKey | null;
   onFight: () => void;
-  onStop: () => void;
   onAgain: () => void;
+  /** Battle pending belum selesai — arena terkunci */
+  disabled: boolean;
 };
 
 const RESULT_STYLE = {
@@ -49,16 +66,22 @@ export default function BattleStage({
   bet,
   onBetChange,
   apiBalance,
+  poolMaxBet,
   spinElement,
   onFight,
-  onStop,
   onAgain,
+  disabled,
 }: BattleStageProps) {
   const chosen = byKey[selected];
   const betN = Math.floor(Number(bet));
   const betValid = Number.isFinite(betN) && betN >= MIN_BET;
   const betAffordable = betValid && betN <= apiBalance;
-  const fighting = phase === "fighting";
+  const betBackable = betValid && betN <= poolMaxBet;
+  const fighting =
+    phase === "approving" ||
+    phase === "committing" ||
+    phase === "waiting" ||
+    phase === "revealing";
 
   return (
     <section className="rounded-[32px] border border-white/5 bg-abyss-900/70 p-5 sm:p-8">
@@ -150,7 +173,7 @@ export default function BattleStage({
               </>
             ) : fighting && spinElement ? (
               <>
-                {/* Roda elemen — berganti cepat sampai pemain menekan STOP */}
+                {/* Roda elemen — berputar sampai hasil reveal on-chain keluar */}
                 <div
                   className="mt-2 flex aspect-square w-full items-center justify-center rounded-2xl border-2 border-dashed border-ember-400/50 bg-abyss-800/60"
                   style={
@@ -198,15 +221,9 @@ export default function BattleStage({
                   {byKey[result.player].name} {byKey[result.player].verb}{" "}
                   {byKey[result.system].name}! Profit{" "}
                   <strong className="text-emerald-300">
-                    +{fmt(result.delta, 0)} API
-                  </strong>
-                  {result.bonus > 0 && (
-                    <>
-                      {" "}
-                      (termasuk Streak Bonus ⚡ +{fmt(result.bonus, 0)} API —{" "}
-                      {STREAK_EVERY} menang beruntun!)
-                    </>
-                  )}
+                    +{fmt(result.delta, 2)} API
+                  </strong>{" "}
+                  ({WIN_MULTIPLIER}× bet dibayar dari reward pool).
                 </>
               )}
               {result.outcome === "lose" && (
@@ -229,13 +246,23 @@ export default function BattleStage({
                   </>
                 ))}
             </p>
-            <button
-              type="button"
-              onClick={onAgain}
-              className="btn-ember font-display mt-4 rounded-full px-7 py-2.5 tracking-wider transition-transform hover:-translate-y-0.5"
+            <a
+              href={`${EXPLORER_URL}/tx/${result.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block text-xs text-abyss-300 underline-offset-2 hover:text-ember-300 hover:underline"
             >
-              ⚔️ BATTLE LAGI
-            </button>
+              Lihat transaksi di Blockscout ↗
+            </a>
+            <div>
+              <button
+                type="button"
+                onClick={onAgain}
+                className="btn-ember font-display mt-4 rounded-full px-7 py-2.5 tracking-wider transition-transform hover:-translate-y-0.5"
+              >
+                ⚔️ BATTLE LAGI
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -251,7 +278,7 @@ export default function BattleStage({
             <button
               key={el.key}
               type="button"
-              disabled={fighting}
+              disabled={fighting || disabled}
               onClick={() => onSelect(el.key)}
               aria-pressed={isSelected}
               style={{ "--el": el.color } as React.CSSProperties}
@@ -293,7 +320,7 @@ export default function BattleStage({
             min={MIN_BET}
             step={1}
             value={bet}
-            disabled={fighting}
+            disabled={fighting || disabled}
             onChange={(e) => onBetChange(e.target.value)}
             className="mt-2 w-full rounded-xl border border-white/10 bg-night/70 p-3 text-lg font-semibold text-cream outline-none transition-colors focus:border-ember-400/60 disabled:opacity-60"
           />
@@ -303,7 +330,7 @@ export default function BattleStage({
             <button
               key={q}
               type="button"
-              disabled={fighting}
+              disabled={fighting || disabled}
               onClick={() => onBetChange(String(q))}
               className={`rounded-full border px-3.5 py-2.5 text-xs transition-colors disabled:opacity-60 ${
                 bet === String(q)
@@ -327,21 +354,26 @@ export default function BattleStage({
           ⚠️ Saldo API kurang — deposit CELO dulu di panel Bank Arena.
         </p>
       )}
+      {betValid && betAffordable && !betBackable && (
+        <p className="mt-2 text-xs text-red-300">
+          ⚠️ Reward pool sedang rendah — bet maksimum {fmt(poolMaxBet, 0)} API.
+        </p>
+      )}
 
       <button
         type="button"
-        onClick={fighting ? onStop : onFight}
-        disabled={!fighting && !betAffordable}
+        onClick={onFight}
+        disabled={fighting || disabled || !betAffordable || !betBackable}
         className={`btn-ember font-display mt-5 w-full rounded-2xl py-4 text-xl tracking-wider transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 ${
           fighting ? "animate-pulse" : ""
         }`}
       >
-        {fighting ? "✋ STOP!" : "⚔️ FIGHT!"}
+        {fighting ? "⚔️ BERTARUNG…" : "⚔️ FIGHT!"}
       </button>
       <p className="mt-3 text-center text-[11px] text-abyss-300">
         {fighting
-          ? "Klik STOP untuk mengunci elemen sistem — di situlah nasibmu ditentukan!"
-          : "Menang = terima 1.8× bet (Opsi Fixed Reward) · Kalah = bet masuk reward pool · Seri = bet kembali."}
+          ? PHASE_STATUS[phase as Exclude<Phase, "idle" | "result">]
+          : `Menang = ${WIN_MULTIPLIER}× bet dari reward pool · Kalah = bet masuk pool · Seri = bet kembali. Battle = 2 transaksi (commit + reveal).`}
       </p>
     </section>
   );
