@@ -19,3 +19,24 @@ export default function HistoryPanel({
       {history.length === 0 ? (
         <p className="mt-4 text-sm text-abyss-300">
           Belum ada battle. Ayo turun ke arena! ⚔️
+        </p>
+      ) : (
+        <ul className="mt-4 space-y-2">
+          {history.map((record) => {
+            const outcome = OUTCOME_LABEL[record.outcome];
+            return (
+              <li
+                key={record.id}
+                className="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-night/50 px-3 py-2.5 text-sm"
+              >
+                <span className="text-base">
+                  {EMOJI[record.player]}{" "}
+                  <span className="text-xs text-abyss-300">vs</span>{" "}
+                  {EMOJI[record.system]}
+                </span>
+                <span
+                  className={`font-display text-xs tracking-wider ${outcome.className}`}
+                >
+                  {outcome.text}
+                </span>
+                <span
