@@ -6,3 +6,4 @@ kombinasi warna primer/aksen/latar yang berbeda.
 ## Riwayat iterasi
 - 2026-06-10 20:08:15 - iterasi 1.1 : primer `#0593e6`, aksen `#c60ea8`, latar `#d9dac0`
 - 2026-06-10 20:08:15 - iterasi 1.2 : primer `#d6be66`, aksen `#535de9`, latar `#9fbaed`
+- 2026-06-10 20:08:15 - iterasi 1.3 : primer `#d6fed9`, aksen `#d5e2fc`, latar `#7a3e93`
