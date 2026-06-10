@@ -66,3 +66,36 @@ export default function Rewards() {
             <Reveal key={r.name} delay={i * 100}>
               <div className="group flex flex-col items-center text-center">
                 <div className="relative">
+                  <div
+                    className="absolute -inset-4 rounded-full opacity-50 blur-xl transition-opacity duration-300 group-hover:opacity-90"
+                    style={{
+                      background: `radial-gradient(circle, ${r.glow}55, transparent 70%)`,
+                    }}
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="animate-float relative text-6xl drop-shadow-[0_10px_18px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-110"
+                    style={{ animationDelay: `${i * 0.7}s` }}
+                  >
+                    {r.icon}
+                  </div>
+                </div>
+                {/* Pedestal */}
+                <div
+                  className="mt-3 h-5 w-24 rounded-[100%] border border-white/10 bg-gradient-to-b from-abyss-700 to-abyss-900 shadow-[0_12px_24px_-6px_rgba(0,0,0,0.7)]"
+                  aria-hidden="true"
+                />
+                <h3 className="font-display mt-5 text-sm tracking-wide text-cream sm:text-base">
+                  {r.name}
+                </h3>
+                <p className="mt-1.5 max-w-[190px] text-xs text-abyss-300">
+                  {r.desc}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
