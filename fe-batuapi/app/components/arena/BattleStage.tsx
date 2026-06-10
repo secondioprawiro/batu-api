@@ -48,3 +48,53 @@ export default function BattleStage({
   onSelect,
   bet,
   onBetChange,
+  apiBalance,
+  spinElement,
+  onFight,
+  onStop,
+  onAgain,
+}: BattleStageProps) {
+  const chosen = byKey[selected];
+  const betN = Math.floor(Number(bet));
+  const betValid = Number.isFinite(betN) && betN >= MIN_BET;
+  const betAffordable = betValid && betN <= apiBalance;
+  const fighting = phase === "fighting";
+
+  return (
+    <section className="rounded-[32px] border border-white/5 bg-abyss-900/70 p-5 sm:p-8">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h1 className="font-display text-glow-soft text-2xl tracking-wide text-cream sm:text-3xl">
+            ARENA BATU API
+          </h1>
+          <p className="mt-1 text-sm text-abyss-300">
+            Pilih elemen, pasang bet, kalahkan sistem.
+          </p>
+        </div>
+        <span className="rounded-full border border-ember-500/30 bg-ember-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-ember-300">
+          PLAYER VS SYSTEM
+        </span>
+      </div>
+
+      {/* Panggung battle */}
+      <div className="relative mt-6 overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-b from-blood-950/60 to-night/80 p-6 sm:p-8">
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto h-20 max-w-md rounded-[100%] bg-ember-500/10 blur-2xl"
+          aria-hidden="true"
+        />
+        <div className="relative flex items-center justify-center gap-4 sm:gap-12">
+          {/* Pemain */}
+          <div className="flex w-28 flex-col items-center sm:w-40">
+            <span className="text-[10px] font-semibold tracking-[0.3em] text-abyss-300">
+              KAMU
+            </span>
+            <div
+              className="relative mt-2 w-full"
+              style={{ "--el": chosen.color } as React.CSSProperties}
+            >
+              <div
+                className="el-glow-bg absolute -inset-4 opacity-40 blur-2xl"
+                aria-hidden="true"
+              />
+              <ElementMascot
+                element={selected}
