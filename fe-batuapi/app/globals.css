@@ -146,3 +146,40 @@ body {
     #1c0f20 32%,
     #0a2b29 78%,
     #061b1a 100%
+  );
+}
+
+.moon {
+  background: radial-gradient(
+    circle at 38% 35%,
+    #fffdf4,
+    #ffe9bd 55%,
+    #f6c87f 78%
+  );
+  box-shadow:
+    0 0 80px 30px rgba(255, 233, 189, 0.22),
+    0 0 200px 90px rgba(255, 233, 189, 0.1);
+}
+
+.title-hero {
+  background: linear-gradient(180deg, #ffd98a 0%, #ffaa3c 45%, #f4511e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 5px 0 rgba(61, 16, 8, 0.9))
+    drop-shadow(0 0 30px rgba(255, 138, 30, 0.35));
+}
+
+/* === Surfaces & effects === */
+
+.glass {
+  background: rgba(6, 27, 26, 0.62);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.stitched {
+  border: 2px dashed rgba(255, 197, 110, 0.22);
+}
+
+.text-glow-ember {
