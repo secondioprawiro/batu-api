@@ -1,0 +1,17 @@
+{
+  "name": "batu-api-onchain-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generate wallets, distribute CELO, and run automated deposit tx to the BatuApi game contract on Celo mainnet.",
+  "scripts": {
+    "generate": "node generate-wallets.js",
+    "distribute": "node distribute.js",
+    "deposit": "node deposit-run.js",
+    "balances": "node balances.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "viem": "^2.21.0"
+  }
+}

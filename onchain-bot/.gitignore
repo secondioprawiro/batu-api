@@ -1,0 +1,7 @@
+# RAHASIA — jangan pernah commit
+.env
+wallets.json
+
+# Runtime
+node_modules/
+logs/
