@@ -35,3 +35,22 @@ export type ArenaState = {
   history: BattleRecord[];
   streakEl: ElementKey | null;
   streakN: number;
+};
+
+export const INITIAL_STATE: ArenaState = {
+  connected: false,
+  celo: 10,
+  api: 0,
+  pool: 25_000,
+  history: [],
+  streakEl: null,
+  streakN: 0,
+};
+
+export const STORAGE_KEY = "batu-api-demo-v1";
+
+export const EMOJI: Record<ElementKey, string> = {
+  batu: "🪨",
+  api: "🔥",
+  air: "💧",
+  daun: "🌿",
