@@ -35,3 +35,39 @@ export default function BattleRules() {
       >
         🍂
       </span>
+
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <Reveal>
+          <SectionHeading
+            eyebrow="BATTLE RULES"
+            title="Papan Aturan Battle"
+            subtitle="Empat elemen saling mengunci dalam satu siklus. Hafalkan sebelum pasang bet."
+          />
+        </Reveal>
+
+        {/* Siklus elemen */}
+        <Reveal delay={120}>
+          <div className="stitched mt-14 rounded-[32px] bg-abyss-900/60 p-6 sm:p-8">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+              {CYCLE.map((key, i) => (
+                <div key={key} className="flex items-center gap-2 sm:gap-4">
+                  <div
+                    className="flex w-16 flex-col items-center sm:w-20"
+                    style={{ "--el": byKey[key].color } as React.CSSProperties}
+                  >
+                    <ElementMascot
+                      element={key}
+                      idPrefix={`cycle-${key}`}
+                      className="w-full drop-shadow-[0_8px_14px_rgba(0,0,0,0.4)]"
+                    />
+                    <span className="el-text font-display mt-1 text-sm tracking-wide">
+                      {byKey[key].name}
+                    </span>
+                  </div>
+                  <ArrowIcon />
+                  {i === CYCLE.length - 1 && (
+                    <div className="flex w-16 flex-col items-center opacity-50 sm:w-20">
+                      <ElementMascot
+                        element="air"
+                        idPrefix="cycle-air-loop"
+                        className="w-full"
