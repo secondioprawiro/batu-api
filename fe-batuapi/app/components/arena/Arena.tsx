@@ -274,3 +274,48 @@ export default function Arena() {
           <BankPanel
             celo={state.celo}
             api={state.api}
+            busy={phase === "fighting"}
+            onDeposit={deposit}
+            onWithdraw={withdraw}
+          />
+          <HistoryPanel history={state.history} />
+        </div>
+      </main>
+
+      {/* Overlay connect wallet */}
+      {!state.connected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/70 p-4 backdrop-blur-md">
+          <div className="stitched w-full max-w-sm rounded-3xl bg-abyss-900/95 p-8 text-center shadow-2xl">
+            <Image
+              src="/logo.png"
+              alt="Logo Batu Api"
+              width={120}
+              height={120}
+              className="mx-auto h-28 w-28 object-contain drop-shadow-[0_0_24px_rgba(255,138,30,0.45)]"
+            />
+            <h1 className="font-display text-glow-soft mt-4 text-2xl tracking-wide text-cream">
+              MASUK ARENA
+            </h1>
+            <p className="mt-3 text-sm text-abyss-300">
+              Hubungkan wallet untuk mulai battle. Ini wallet demo — tidak
+              perlu wallet asli.
+            </p>
+            <button
+              type="button"
+              onClick={connect}
+              className="btn-ember font-display mt-6 w-full rounded-2xl py-3.5 text-lg tracking-wider transition-transform hover:-translate-y-0.5"
+            >
+              CONNECT WALLET
+            </button>
+            <Link
+              href="/"
+              className="mt-4 inline-block text-xs text-abyss-300 transition-colors hover:text-ember-300"
+            >
+              ← Kembali ke beranda
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
