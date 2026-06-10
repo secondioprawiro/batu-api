@@ -69,3 +69,38 @@ export default function BankPanel({
           <dt className="text-abyss-300">Saldo CELO</dt>
           <dd className="font-semibold text-cream">🟡 {fmt(celo)}</dd>
         </div>
+        <div className="flex justify-between">
+          <dt className="text-abyss-300">Saldo API Coin</dt>
+          <dd className="font-semibold text-ember-300">🔥 {fmt(api, 0)}</dd>
+        </div>
+      </dl>
+
+      <div className="mt-5 grid grid-cols-2 gap-1.5 rounded-xl bg-night/60 p-1.5">
+        {(["deposit", "withdraw"] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => switchTab(t)}
+            className={`font-display rounded-lg py-2 text-sm tracking-wider transition-colors ${
+              tab === t ? "btn-ember" : "text-abyss-300 hover:text-cream"
+            }`}
+          >
+            {t === "deposit" ? "DEPOSIT" : "WITHDRAW"}
+          </button>
+        ))}
+      </div>
+
+      <label
+        htmlFor="bank-amount"
+        className="mt-5 block text-xs uppercase tracking-widest text-abyss-300"
+      >
+        {tab === "deposit" ? "Jumlah CELO" : "Jumlah API"}
+      </label>
+      <input
+        id="bank-amount"
+        type="number"
+        min={tab === "deposit" ? MIN_DEPOSIT : 1}
+        step={tab === "deposit" ? 0.001 : 1}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
