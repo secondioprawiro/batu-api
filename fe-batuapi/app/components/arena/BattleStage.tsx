@@ -298,3 +298,51 @@ export default function BattleStage({
             className="mt-2 w-full rounded-xl border border-white/10 bg-night/70 p-3 text-lg font-semibold text-cream outline-none transition-colors focus:border-ember-400/60 disabled:opacity-60"
           />
         </div>
+        <div className="flex gap-2">
+          {QUICK_BETS.map((q) => (
+            <button
+              key={q}
+              type="button"
+              disabled={fighting}
+              onClick={() => onBetChange(String(q))}
+              className={`rounded-full border px-3.5 py-2.5 text-xs transition-colors disabled:opacity-60 ${
+                bet === String(q)
+                  ? "border-ember-400/70 bg-ember-500/15 text-ember-300"
+                  : "border-white/10 text-abyss-200 hover:border-ember-400/50 hover:text-ember-300"
+              }`}
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {!betValid && (
+        <p className="mt-2 text-xs text-red-300">
+          ⚠️ Bet minimal {MIN_BET} API.
+        </p>
+      )}
+      {betValid && !betAffordable && (
+        <p className="mt-2 text-xs text-red-300">
+          ⚠️ Saldo API kurang — deposit CELO dulu di panel Bank Arena.
+        </p>
+      )}
+
+      <button
+        type="button"
+        onClick={fighting ? onStop : onFight}
+        disabled={!fighting && !betAffordable}
+        className={`btn-ember font-display mt-5 w-full rounded-2xl py-4 text-xl tracking-wider transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 ${
+          fighting ? "animate-pulse" : ""
+        }`}
+      >
+        {fighting ? "✋ STOP!" : "⚔️ FIGHT!"}
+      </button>
+      <p className="mt-3 text-center text-[11px] text-abyss-300">
+        {fighting
+          ? "Klik STOP untuk mengunci elemen sistem — di situlah nasibmu ditentukan!"
+          : "Menang = terima 1.8× bet (Opsi Fixed Reward) · Kalah = bet masuk reward pool · Seri = bet kembali."}
+      </p>
+    </section>
+  );
+}
