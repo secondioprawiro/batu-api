@@ -41,3 +41,23 @@ export const ELEMENTS: GameElement[] = [
     name: "Air",
     color: "#4cc3ff",
     trait: "Fleksibel, menenangkan",
+    desc: "Mengalir tenang, memadamkan amarah api.",
+    verb: "memadamkan",
+    beats: "api",
+    beatenBy: "batu",
+  },
+  {
+    key: "daun",
+    name: "Daun",
+    color: "#71d873",
+    trait: "Natural, terus tumbuh",
+    desc: "Merambat pelan, menyelimuti pertahanan lawan.",
+    verb: "menyelimuti",
+    beats: "batu",
+    beatenBy: "api",
+  },
+];
+
+export const byKey = Object.fromEntries(
+  ELEMENTS.map((el) => [el.key, el]),
+) as Record<ElementKey, GameElement>;
