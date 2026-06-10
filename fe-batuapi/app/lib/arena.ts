@@ -17,3 +17,21 @@ export type Outcome = "win" | "lose" | "draw";
 export type BattleRecord = {
   id: number;
   player: ElementKey;
+  system: ElementKey;
+  bet: number;
+  outcome: Outcome;
+  /** Perubahan saldo API milik pemain (termasuk bonus) */
+  delta: number;
+  bonus: number;
+};
+
+export type FightResult = Omit<BattleRecord, "id">;
+
+export type ArenaState = {
+  connected: boolean;
+  celo: number;
+  api: number;
+  pool: number;
+  history: BattleRecord[];
+  streakEl: ElementKey | null;
+  streakN: number;
