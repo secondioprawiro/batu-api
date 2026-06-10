@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import SectionHeading from "./SectionHeading";
 
@@ -76,8 +77,8 @@ export default function DepositSection() {
             <h3 className="font-display text-lg tracking-wider text-cream">
               KALKULATOR DEPOSIT
             </h3>
-            <span className="rounded-full border border-ember-500/30 bg-ember-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-ember-300">
-              DEMO
+            <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-emerald-300">
+              ON-CHAIN
             </span>
           </div>
 
@@ -151,14 +152,15 @@ export default function DepositSection() {
             Rasio tetap: 1 CELO = 1000 API · 1000 API = 1 CELO saat withdraw.
           </p>
 
-          <button
-            type="button"
-            className="btn-ember font-display mt-5 w-full rounded-2xl py-4 text-lg tracking-wider transition-transform hover:-translate-y-0.5"
+          <Link
+            href="/play"
+            className="btn-ember font-display mt-5 block w-full rounded-2xl py-4 text-center text-lg tracking-wider transition-transform hover:-translate-y-0.5"
           >
             DEPOSIT SEKARANG
-          </button>
+          </Link>
           <p className="mt-3 text-center text-[11px] text-abyss-400">
-            UI demo — koneksi smart contract menyusul (Roadmap Phase 1).
+            Deposit asli dilakukan di Arena — smart contract live di Celo
+            mainnet.
           </p>
         </div>
       </div>
