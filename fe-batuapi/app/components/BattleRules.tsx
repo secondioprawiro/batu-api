@@ -108,3 +108,38 @@ export default function BattleRules() {
                       idPrefix={`rule-${winner.key}`}
                       className="relative w-full"
                     />
+                  </div>
+                  <div>
+                    <p className="font-display text-lg tracking-wider">
+                      <span className="el-text">{winner.name.toUpperCase()}</span>{" "}
+                      <span className="text-ember-400">&gt;</span>{" "}
+                      <span className="text-cream">
+                        {loser.name.toUpperCase()}
+                      </span>
+                    </p>
+                    <p className="mt-1 text-sm text-abyss-300">
+                      {winner.name} {winner.verb} {loser.name} — menang telak di
+                      arena.
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        <Reveal delay={200}>
+          <div className="mt-6 rounded-2xl border border-dashed border-abyss-300/25 bg-abyss-800/40 p-4 text-center text-sm text-abyss-200">
+            🤝 Elemen sama atau pasangan netral (Api–Batu, Air–Daun) ={" "}
+            <span className="text-ember-300">Seri</span> — bet dikembalikan
+            atau battle diulang.
+          </div>
+        </Reveal>
+
+        <p className="sr-only">
+          Aturan lengkap: {ELEMENTS.map((e) => `${e.name} mengalahkan ${byKey[e.beats].name}`).join(", ")}.
+        </p>
+      </div>
+    </section>
+  );
+}
