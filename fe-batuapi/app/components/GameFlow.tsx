@@ -51,3 +51,28 @@ export default function GameFlow() {
 
         <div className="relative mt-20 rounded-[36px] border border-white/5 bg-abyss-900/80 px-6 pb-10 shadow-[inset_0_2px_18px_rgba(0,0,0,0.45)] sm:px-10">
           <div
+            className="absolute left-[12%] right-[12%] top-8 hidden border-t-2 border-dashed border-ember-500/20 md:block"
+            aria-hidden="true"
+          />
+          <div className="grid gap-12 md:grid-cols-4 md:gap-6">
+            {STEPS.map((step, i) => (
+              <Reveal key={step.n} delay={i * 120}>
+                <div className="relative flex flex-col items-center text-center">
+                  <div className="font-display text-glow-ember -mt-8 flex h-16 w-16 items-center justify-center rounded-2xl border border-ember-500/30 bg-gradient-to-b from-abyss-700 to-abyss-900 text-2xl text-ember-400 shadow-lg">
+                    {step.n}
+                  </div>
+                  <h3 className="font-display mt-5 text-lg tracking-wide text-cream">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 max-w-[230px] text-sm text-abyss-300">
+                    {step.desc}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
