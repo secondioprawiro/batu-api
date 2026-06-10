@@ -82,3 +82,45 @@ export default function DepositSection() {
           </div>
 
           <label
+            htmlFor="deposit-celo"
+            className="mt-6 block text-xs uppercase tracking-widest text-abyss-300"
+          >
+            Kamu deposit
+          </label>
+          <div className="mt-2 flex items-center gap-3 rounded-2xl border border-white/10 bg-night/70 p-4 transition-colors focus-within:border-ember-400/60">
+            <input
+              id="deposit-celo"
+              type="number"
+              min={MIN_DEPOSIT}
+              step={0.001}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full flex-1 bg-transparent text-2xl font-semibold text-cream outline-none"
+              placeholder="0.001"
+            />
+            <span className="flex shrink-0 items-center gap-2 rounded-full border border-[#fcff52]/30 bg-[#fcff52]/10 px-3 py-1.5 text-sm text-cream">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#fcff52] text-[10px] font-bold text-black">
+                C
+              </span>
+              CELO
+            </span>
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {QUICK_AMOUNTS.map((q) => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => setAmount(q)}
+                className={`rounded-full border px-3.5 py-1.5 text-xs transition-colors ${
+                  amount === q
+                    ? "border-ember-400/70 bg-ember-500/15 text-ember-300"
+                    : "border-white/10 text-abyss-200 hover:border-ember-400/50 hover:text-ember-300"
+                }`}
+              >
+                {q} CELO
+              </button>
+            ))}
+          </div>
+
+          <div className="my-4 flex justify-center">
