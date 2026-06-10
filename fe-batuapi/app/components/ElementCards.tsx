@@ -110,3 +110,30 @@ export default function ElementCards() {
                   aria-hidden="true"
                 >
                   {isSelected && (
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ background: el.color }}
+                    />
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            href={`/play?element=${selected}`}
+            className="btn-ember font-display inline-block rounded-full px-10 py-4 text-lg tracking-wider transition-transform hover:-translate-y-1"
+          >
+            MASUK ARENA DENGAN {chosen.name.toUpperCase()}
+          </Link>
+          <p className="mt-4 text-xs text-abyss-400">
+            Mode demo — battle on-chain hadir setelah smart contract siap
+            (Roadmap Phase 3).
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
