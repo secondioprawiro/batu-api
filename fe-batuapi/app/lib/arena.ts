@@ -54,3 +54,20 @@ export const EMOJI: Record<ElementKey, string> = {
   api: "🔥",
   air: "💧",
   daun: "🌿",
+};
+
+export function decideOutcome(player: ElementKey, system: ElementKey): Outcome {
+  if (player === system) return "draw";
+  if (byKey[player].beats === system) return "win";
+  if (byKey[system].beats === player) return "lose";
+  /* Pasangan netral (Api vs Batu, Air vs Daun) tidak saling mengalahkan */
+  return "draw";
+}
+
+export function isElementKey(value: string | null): value is ElementKey {
+  return value !== null && value in byKey;
+}
+
+export function fmt(n: number, maxFraction = 3): string {
+  return n.toLocaleString("id-ID", { maximumFractionDigits: maxFraction });
+}
