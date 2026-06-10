@@ -65,3 +65,35 @@ export default function Footer() {
             ))}
           </ul>
         </div>
+
+        <div>
+          <h4 className="font-display text-sm tracking-[0.25em] text-abyss-200">
+            KOMUNITAS
+          </h4>
+          <div className="mt-4 flex gap-3">
+            {SOCIALS.map((s) => (
+              <a
+                key={s.label}
+                href="#"
+                aria-label={s.label}
+                className="glass flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-xs font-bold text-abyss-200 transition-colors hover:border-ember-400/50 hover:text-ember-300"
+              >
+                {s.short}
+              </a>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-abyss-300">
+            Kanal komunitas segera hadir.
+          </p>
+        </div>
+      </div>
+
+      <div className="border-t border-white/5">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-abyss-300 sm:flex-row sm:px-6">
+          <p>© 2026 Batu Api. All rights reserved.</p>
+          <p>🪨🔥💧🌿 · 1 CELO = 1000 API Coin</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
