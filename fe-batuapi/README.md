@@ -20,6 +20,16 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Arena soundtrack
+
+The battle arena (`/play`) plays a looping background track.
+
+- **Asset:** `public/battle-theme.mp3`.
+- **Provider:** `app/components/arena/ArenaAudio.tsx` (`ArenaAudioProvider` + `useArenaAudio`) renders the looping `<audio>` element, starts playback on the first user gesture (browser autoplay policy), pauses while the tab is hidden, and persists the mute choice in `localStorage` (`batuapi:music-muted`).
+- **Control:** `app/components/arena/MuteButton.tsx` is the 🔊/🔇 toggle mounted in the arena HUD.
+
+To swap the track, replace `public/battle-theme.mp3` (keep the filename) or update `TRACK_SRC` in `ArenaAudio.tsx`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
