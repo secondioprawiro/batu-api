@@ -50,6 +50,7 @@ import {
   apiCoinAbi,
   batuApiAbi,
 } from "@/app/lib/contracts";
+import { ArenaAudioProvider } from "./ArenaAudio";
 import BankPanel from "./BankPanel";
 import BattleStage, { type Phase } from "./BattleStage";
 import HistoryPanel from "./HistoryPanel";
@@ -427,6 +428,7 @@ export default function Arena() {
   const showPendingBanner = pendingActive && !busy && phase !== "result";
 
   return (
+    <ArenaAudioProvider>
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-gradient-to-b from-blood-950 via-abyss-950 to-night">
       {/* Dekorasi atmosfer */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -615,5 +617,6 @@ export default function Arena() {
         </div>
       )}
     </div>
+    </ArenaAudioProvider>
   );
 }
