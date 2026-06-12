@@ -14,6 +14,7 @@ import {
  * berada di arena. Disajikan sebagai aset statis dari /public. */
 const TRACK_SRC = "/battle-theme.mp3";
 const VOLUME = 0.5;
+const MUTE_KEY = "batuapi:music-muted";
 
 type ArenaAudioValue = {
   /** Musik sedang disenyapkan. */
@@ -34,9 +35,22 @@ export function useArenaAudio(): ArenaAudioValue {
 
 export function ArenaAudioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [muted, setMuted] = useState(false);
+  /* Pulihkan preferensi senyap dari kunjungan sebelumnya. Arena di-render
+   * client-only (useSearchParams + Suspense fallback={null}), jadi inisialisasi
+   * lazy dari localStorage aman dari hydration mismatch. */
+  const [muted, setMuted] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem(MUTE_KEY) === "1";
+  });
 
   const toggleMuted = useCallback(() => setMuted((m) => !m), []);
+
+  /* Terapkan status senyap ke elemen audio + simpan preferensinya. */
+  useEffect(() => {
+    const el = audioRef.current;
+    if (el) el.muted = muted;
+    window.localStorage.setItem(MUTE_KEY, muted ? "1" : "0");
+  }, [muted]);
 
   /* Browser memblokir autoplay sampai ada interaksi pengguna. Coba putar saat
    * mount; jika ditolak, mulai pada gesture pertama (klik / tombol), lalu
