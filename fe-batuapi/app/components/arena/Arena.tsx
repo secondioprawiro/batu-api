@@ -51,6 +51,7 @@ import {
   batuApiAbi,
 } from "@/app/lib/contracts";
 import { ArenaAudioProvider } from "./ArenaAudio";
+import MuteButton from "./MuteButton";
 import BankPanel from "./BankPanel";
 import BattleStage, { type Phase } from "./BattleStage";
 import HistoryPanel from "./HistoryPanel";
@@ -486,6 +487,7 @@ export default function Arena() {
                   <strong>{chip.value}</strong>
                 </span>
               ))}
+            <MuteButton />
             <ConnectButton
               showBalance={false}
               chainStatus="icon"
