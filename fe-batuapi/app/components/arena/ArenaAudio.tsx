@@ -72,6 +72,19 @@ export function ArenaAudioProvider({ children }: { children: ReactNode }) {
     return unlock;
   }, []);
 
+  /* Hentikan musik saat tab disembunyikan (hemat resource) dan lanjutkan saat
+   * pemain kembali ke arena. */
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    const onVisibility = () => {
+      if (document.hidden) el.pause();
+      else el.play().catch(() => {});
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
   return (
     <ArenaAudioContext.Provider value={{ muted, toggleMuted }}>
       <audio
