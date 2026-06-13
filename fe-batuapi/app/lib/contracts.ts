@@ -1,15 +1,15 @@
 /**
  * Alamat & ABI kontrak Batu Api — Celo mainnet (chain id 42220).
- * Sumber: C:\batu-api\sc-batuapi (Foundry), terverifikasi di Blockscout.
+ * Alamat & chain id bersumber dari paket npm `batuapi-sdk` (single source
+ * of truth, di-generate dari artifact Foundry sc-batuapi).
  */
+import { ADDRESSES, CELO_MAINNET_CHAIN_ID } from "batuapi-sdk";
 
-export const CELO_CHAIN_ID = 42220;
+export const CELO_CHAIN_ID = CELO_MAINNET_CHAIN_ID;
 
-export const BATU_API_ADDRESS =
-  "0x618Cd4F7a020a9814B17B68fD9b2Dc5F3b5D06b6" as const;
+export const BATU_API_ADDRESS = ADDRESSES.BatuApi;
 
-export const API_COIN_ADDRESS =
-  "0xe109fCa2C3AcB099e51F583346680DD3DfE06d26" as const;
+export const API_COIN_ADDRESS = ADDRESSES.APICoin;
 
 export const EXPLORER_URL = "https://celo.blockscout.com";
 
