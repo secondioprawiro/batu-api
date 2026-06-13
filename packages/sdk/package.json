@@ -1,0 +1,47 @@
+{
+  "name": "batuapi-sdk",
+  "version": "0.1.0",
+  "description": "Batu Api — Celo on-chain element battle game. Contract addresses, ABIs, and element rules for the BatuApi + APICoin contracts on Celo Mainnet.",
+  "keywords": [
+    "celo",
+    "ethereum",
+    "web3",
+    "viem",
+    "wagmi",
+    "smart-contracts",
+    "abi",
+    "batuapi"
+  ],
+  "license": "MIT",
+  "author": "secondioprawiro",
+  "homepage": "https://github.com/secondioprawiro/batu-api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/secondioprawiro/batu-api.git",
+    "directory": "packages/sdk"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
