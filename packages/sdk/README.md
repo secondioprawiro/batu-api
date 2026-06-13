@@ -1,5 +1,8 @@
 # batuapi-sdk
 
+[![npm version](https://img.shields.io/npm/v/batuapi-sdk.svg)](https://www.npmjs.com/package/batuapi-sdk)
+[![npm downloads](https://img.shields.io/npm/dm/batuapi-sdk.svg)](https://www.npmjs.com/package/batuapi-sdk)
+
 On-chain constants and ABIs for [**Batu Api**](https://github.com/secondioprawiro/batu-api) — an adminless element-battle game on **Celo Mainnet**.
 
 Deposit CELO to mint API Coin, battle the system with elements (commit–reveal), win/lose API against a reward pool, then redeem API back to CELO.
