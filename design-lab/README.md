@@ -728,3 +728,4 @@ kombinasi warna primer/aksen/latar yang berbeda.
 - 2026-06-16 08:53:03 - iterasi 13.2 : primer `#2d8b58`, aksen `#e0a587`, latar `#f6b999`
 - 2026-06-16 08:53:03 - iterasi 13.3 : primer `#800dd6`, aksen `#3f0a65`, latar `#6ebeef`
 - 2026-06-16 08:53:03 - iterasi 13.4 : primer `#00a49d`, aksen `#612e70`, latar `#365666`
+- 2026-06-16 08:53:18 - iterasi 14.1 : primer `#2d079e`, aksen `#3d6db0`, latar `#5f2c56`
