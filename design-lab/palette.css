@@ -1,11 +1,11 @@
-﻿/* Palet eksperimen Batu Api - iterasi 3.2 */
+﻿/* Palet eksperimen Batu Api - iterasi 3.3 */
 :root {
-  --color-primary: #2b0e47;
-  --color-accent: #b50ca3;
-  --color-bg: #5e0495;
-  --color-text: #0c90db;
-  --radius-card: 5px;
-  --gap-base: 6px;
+  --color-primary: #2e06ba;
+  --color-accent: #56ff4c;
+  --color-bg: #3fd93c;
+  --color-text: #e529b6;
+  --radius-card: 28px;
+  --gap-base: 9px;
 }
 
 .lab-card {
