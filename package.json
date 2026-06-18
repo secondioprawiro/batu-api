@@ -1,0 +1,15 @@
+{
+  "name": "batu-api-monorepo",
+  "private": true,
+  "description": "Batu Api monorepo — on-chain element-battle game on Celo Mainnet. Publishable packages live under packages/* (see batuapi-sdk).",
+  "license": "MIT",
+  "author": "secondioprawiro",
+  "homepage": "https://github.com/secondioprawiro/batu-api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/secondioprawiro/batu-api.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
