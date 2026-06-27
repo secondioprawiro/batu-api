@@ -40,8 +40,8 @@ export default function BattleRules() {
         <Reveal>
           <SectionHeading
             eyebrow="BATTLE RULES"
-            title="Papan Aturan Battle"
-            subtitle="Empat elemen saling mengunci dalam satu siklus. Hafalkan sebelum pasang bet."
+            title="Battle Rules Board"
+            subtitle="Four elements lock in a cycle. Memorize before placing your bet."
           />
         </Reveal>
 
@@ -81,8 +81,8 @@ export default function BattleRules() {
               ))}
             </div>
             <p className="mt-5 text-center text-sm text-abyss-300">
-              Tanda panah berarti <span className="text-ember-300">mengalahkan</span>{" "}
-              — siklusnya berputar tanpa ujung.
+              Arrow means <span className="text-ember-300">defeats</span>{" "}
+              — the cycle loops forever.
             </p>
           </div>
         </Reveal>
@@ -118,8 +118,8 @@ export default function BattleRules() {
                       </span>
                     </p>
                     <p className="mt-1 text-sm text-abyss-300">
-                      {winner.name} {winner.verb} {loser.name} — menang telak di
-                      arena.
+                      {winner.name} {winner.verb} {loser.name} — wins decisively
+                      in the arena.
                     </p>
                   </div>
                 </div>
@@ -130,14 +130,14 @@ export default function BattleRules() {
 
         <Reveal delay={200}>
           <div className="mt-6 rounded-2xl border border-dashed border-abyss-300/25 bg-abyss-800/40 p-4 text-center text-sm text-abyss-200">
-            🤝 Elemen sama atau pasangan netral (Api–Batu, Air–Daun) ={" "}
-            <span className="text-ember-300">Seri</span> — bet dikembalikan
-            atau battle diulang.
+            🤝 Same element or neutral pair (Api–Batu, Air–Daun) ={" "}
+            <span className="text-ember-300">Draw</span> — bet returned
+            or battle replayed.
           </div>
         </Reveal>
 
         <p className="sr-only">
-          Aturan lengkap: {ELEMENTS.map((e) => `${e.name} mengalahkan ${byKey[e.beats].name}`).join(", ")}.
+          Full rules: {ELEMENTS.map((e) => `${e.name} beats ${byKey[e.beats].name}`).join(", ")}.
         </p>
       </div>
     </section>

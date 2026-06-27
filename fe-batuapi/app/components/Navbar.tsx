@@ -48,7 +48,7 @@ function WalletButton({ className }: { className: string }) {
               onClick={openChainModal}
               className={`${className} !border-red-400/60 !text-red-300`}
             >
-              Jaringan salah
+              Wrong Network
             </button>
           );
         return (
@@ -94,7 +94,7 @@ export default function Navbar() {
           </span>
         </a>
 
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Utama">
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
           {LINKS.map((link) => (
             <a
               key={link.href}
@@ -119,7 +119,7 @@ export default function Navbar() {
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
             className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-cream lg:hidden"
-            aria-label={menuOpen ? "Tutup menu" : "Buka menu"}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
             <svg
@@ -142,7 +142,7 @@ export default function Navbar() {
 
       {menuOpen && (
         <div className="glass border-b border-white/5 px-4 pb-5 pt-2 lg:hidden">
-          <nav className="flex flex-col gap-1" aria-label="Utama (mobile)">
+          <nav className="flex flex-col gap-1" aria-label="Main (mobile)">
             {LINKS.map((link) => (
               <a
                 key={link.href}

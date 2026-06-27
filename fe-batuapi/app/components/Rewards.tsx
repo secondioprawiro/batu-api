@@ -5,31 +5,31 @@ const REWARDS = [
   {
     icon: "🪙",
     name: "API Coin Reward",
-    desc: "Menang battle, API Coin langsung masuk saldo.",
+    desc: "Win a battle, API Coin goes straight to your balance.",
     glow: "#ffaa3c",
   },
   {
     icon: "💎",
     name: "CELO Withdrawal",
-    desc: "Tukar API kembali menjadi CELO kapan saja.",
+    desc: "Swap API back to CELO anytime.",
     glow: "#fcff52",
   },
   {
     icon: "🧪",
     name: "Battle Pool",
-    desc: "Token dari battle yang kalah mengisi pool reward.",
+    desc: "Tokens from losing battles fill the reward pool.",
     glow: "#71d873",
   },
   {
     icon: "🏆",
     name: "Payout 1.95×",
-    desc: "Setiap kemenangan dibayar 1.95× bet dari reward pool.",
+    desc: "Every win pays 1.95× your bet from the reward pool.",
     glow: "#ffc56e",
   },
   {
     icon: "⚡",
     name: "Provably Fair",
-    desc: "Commit–reveal on-chain — hasil tak bisa dicurangi siapa pun.",
+    desc: "Commit–reveal on-chain — results can't be manipulated by anyone.",
     glow: "#4cc3ff",
   },
 ];
@@ -56,8 +56,8 @@ export default function Rewards() {
         <Reveal>
           <SectionHeading
             eyebrow="REWARDS"
-            title="Pundi-Pundi Arena"
-            subtitle="Menang battle, kumpulkan reward, dan tarik kapan saja ke wallet-mu."
+            title="Arena Rewards"
+            subtitle="Win battles, collect rewards, and withdraw anytime to your wallet."
           />
         </Reveal>
 

@@ -17,7 +17,7 @@ const displayFont = Luckiest_Guy({
 export const metadata: Metadata = {
   title: "Batu Api",
   description:
-    "Pilih elemenmu — Batu, Api, Air, atau Daun. Pasang API Coin dan menangkan reward CELO di arena battle on-chain Batu Api.",
+    "Choose your element — Batu, Api, Air, or Daun. Stake API Coin and win CELO rewards in the Batu Api on-chain battle arena.",
   // Verifikasi kepemilikan proyek TalentApp (tertanam di <head>).
   other: {
     "talentapp:project_verification":
@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="id"
+      lang="en"
       className={`${geistSans.variable} ${displayFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

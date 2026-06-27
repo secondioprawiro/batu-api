@@ -11,19 +11,19 @@ const QUICK_AMOUNTS = ["0.001", "0.1", "0.5", "1", "5"];
 const BENEFITS = [
   {
     icon: "🪙",
-    text: "1 CELO = 1000 API Coin — rasio tetap, tanpa biaya tersembunyi.",
+    text: "1 CELO = 1000 API Coin — fixed rate, no hidden fees.",
   },
   {
     icon: "⚡",
-    text: "Deposit minimal 0.001 CELO (= 1 API Coin).",
+    text: "Minimum deposit 0.001 CELO (= 1 API Coin).",
   },
   {
     icon: "⚔️",
-    text: "API Coin adalah tiket bet untuk setiap battle elemen.",
+    text: "API Coin is the betting ticket for every element battle.",
   },
   {
     icon: "💎",
-    text: "Withdraw kapan saja — API di-burn, CELO dikirim ke wallet sesuai mekanisme smart contract.",
+    text: "Withdraw anytime — API is burned, CELO sent to your wallet per smart contract.",
   },
 ];
 
@@ -34,7 +34,7 @@ export default function DepositSection() {
   const valid = Number.isFinite(celo) && celo > 0;
   const belowMin = valid && celo < MIN_DEPOSIT;
   const api = valid ? celo * RATE : 0;
-  const formattedApi = api.toLocaleString("id-ID", {
+  const formattedApi = api.toLocaleString("en-US", {
     maximumFractionDigits: 3,
   });
 
@@ -53,11 +53,11 @@ export default function DepositSection() {
           <SectionHeading
             align="left"
             eyebrow="DEPOSIT & API COIN"
-            title="Tukar CELO, Dapatkan API Coin"
+            title="Swap CELO, Get API Coin"
           />
           <p className="mt-5 text-abyss-200">
-            API Coin adalah bahan bakar arena. Deposit CELO-mu, terima API
-            Coin, dan mulai pasang bet — semuanya tercatat on-chain di Celo.
+            API Coin is the arena fuel. Deposit your CELO, receive API
+            Coin, and start placing bets — all recorded on-chain on Celo.
           </p>
           <ul className="mt-7 space-y-3.5">
             {BENEFITS.map((b) => (
@@ -75,7 +75,7 @@ export default function DepositSection() {
         <div className="relative rounded-[28px] border border-ember-500/25 bg-gradient-to-b from-abyss-800 to-abyss-950 p-6 shadow-[0_30px_80px_-30px_rgba(255,138,30,0.25)] sm:p-8">
           <div className="flex items-center justify-between">
             <h3 className="font-display text-lg tracking-wider text-cream">
-              KALKULATOR DEPOSIT
+              DEPOSIT CALCULATOR
             </h3>
             <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-emerald-300">
               ON-CHAIN
@@ -86,7 +86,7 @@ export default function DepositSection() {
             htmlFor="deposit-celo"
             className="mt-6 block text-xs uppercase tracking-widest text-abyss-300"
           >
-            Kamu deposit
+            You deposit
           </label>
           <div className="mt-2 flex items-center gap-3 rounded-2xl border border-white/10 bg-night/70 p-4 transition-colors focus-within:border-ember-400/60">
             <input
@@ -131,7 +131,7 @@ export default function DepositSection() {
           </div>
 
           <p className="text-xs uppercase tracking-widest text-abyss-300">
-            Kamu menerima
+            You receive
           </p>
           <div className="mt-2 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-night/70 p-4">
             <span className="font-display text-2xl tracking-wide text-ember-300">
@@ -144,22 +144,22 @@ export default function DepositSection() {
 
           {belowMin && (
             <p className="mt-3 text-xs text-red-300">
-              ⚠️ Minimal deposit {MIN_DEPOSIT} CELO.
+              ⚠️ Minimum deposit {MIN_DEPOSIT} CELO.
             </p>
           )}
 
           <p className="mt-4 text-center text-xs text-abyss-300">
-            Rasio tetap: 1 CELO = 1000 API · 1000 API = 1 CELO saat withdraw.
+            Fixed rate: 1 CELO = 1000 API · 1000 API = 1 CELO on withdrawal.
           </p>
 
           <Link
             href="/play"
             className="btn-ember font-display mt-5 block w-full rounded-2xl py-4 text-center text-lg tracking-wider transition-transform hover:-translate-y-0.5"
           >
-            DEPOSIT SEKARANG
+            DEPOSIT NOW
           </Link>
           <p className="mt-3 text-center text-[11px] text-abyss-400">
-            Deposit asli dilakukan di Arena — smart contract live di Celo
+            Actual deposit is done in the Arena — smart contract live on Celo
             mainnet.
           </p>
         </div>

@@ -93,8 +93,8 @@ export default function Hero() {
         </p>
 
         <p className="mt-6 max-w-2xl text-base text-abyss-200/90 md:text-lg">
-          Pilih elemenmu, pasang API Coin, dan menangkan reward CELO di arena
-          Batu Api.
+          Choose your element, stake API Coin, and win CELO rewards in the
+          Batu Api arena.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
