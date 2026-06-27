@@ -6,35 +6,35 @@ const PHASES = [
     n: 1,
     icon: "⚙️",
     title: "Smart Contract & Token Logic",
-    desc: "Kontrak API Coin, deposit, dan konversi CELO on-chain.",
+    desc: "API Coin contract, deposit, and CELO conversion on-chain.",
     active: true,
   },
   {
     n: 2,
     icon: "🎮",
     title: "Frontend Battle UI",
-    desc: "Arena visual tempat para elemen saling bertarung.",
+    desc: "Visual arena where elements battle each other.",
     active: true,
   },
   {
     n: 3,
     icon: "🎲",
     title: "Random Battle System",
-    desc: "Sistem lawan acak yang adil dan transparan.",
+    desc: "A fair and transparent random opponent system.",
     active: false,
   },
   {
     n: 4,
     icon: "💰",
     title: "Reward Pool & Withdraw",
-    desc: "Pool reward aktif plus penarikan CELO penuh.",
+    desc: "Active reward pool plus full CELO withdrawals.",
     active: false,
   },
   {
     n: 5,
     icon: "⚔️",
     title: "PvP Battle Mode",
-    desc: "Pemain vs pemain — arena sesungguhnya dimulai.",
+    desc: "Player vs player — the real arena begins.",
     active: false,
   },
 ];
@@ -56,8 +56,8 @@ export default function Roadmap() {
         <Reveal>
           <SectionHeading
             eyebrow="ROADMAP"
-            title="Perjalanan Batu Api"
-            subtitle="Dari smart contract pertama sampai arena PvP penuh."
+            title="Batu Api Journey"
+            subtitle="From the first smart contract to a full PvP arena."
           />
         </Reveal>
 
@@ -95,7 +95,7 @@ export default function Roadmap() {
                         : "border-white/10 bg-white/5 text-abyss-300"
                     }`}
                   >
-                    {phase.active ? "Sedang Berjalan" : "Segera"}
+                    {phase.active ? "Active" : "Coming Soon"}
                   </span>
                 </div>
               </Reveal>

@@ -53,8 +53,8 @@ export default function BankPanel({
           ok: true,
           text:
             tab === "deposit"
-              ? `Deposit terkonfirmasi — +${fmt(amount * RATE, 0)} API ✓`
-              : `Withdraw terkonfirmasi — +${fmt(Math.floor(amount / RATE), 6)} CELO ✓`,
+              ? `Deposit confirmed — +${fmt(amount * RATE, 0)} API ✓`
+              : `Withdrawal confirmed — +${fmt(Math.floor(amount / RATE), 6)} CELO ✓`,
         });
       }
     } finally {
@@ -66,7 +66,7 @@ export default function BankPanel({
     <section className="rounded-[28px] border border-ember-500/20 bg-gradient-to-b from-abyss-800 to-abyss-950 p-6">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg tracking-wider text-cream">
-          BANK ARENA
+          ARENA BANK
         </h2>
         <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-emerald-300">
           ON-CHAIN
@@ -75,11 +75,11 @@ export default function BankPanel({
 
       <dl className="mt-4 space-y-1.5 text-sm">
         <div className="flex justify-between">
-          <dt className="text-abyss-300">Saldo CELO</dt>
+          <dt className="text-abyss-300">CELO Balance</dt>
           <dd className="font-semibold text-cream">🟡 {fmt(celo)}</dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-abyss-300">Saldo API Coin</dt>
+          <dt className="text-abyss-300">API Coin Balance</dt>
           <dd className="font-semibold text-ember-300">🔥 {fmt(api, 0)}</dd>
         </div>
       </dl>
@@ -103,7 +103,7 @@ export default function BankPanel({
         htmlFor="bank-amount"
         className="mt-5 block text-xs uppercase tracking-widest text-abyss-300"
       >
-        {tab === "deposit" ? "Jumlah CELO" : "Jumlah API"}
+        {tab === "deposit" ? "CELO Amount" : "API Amount"}
       </label>
       <input
         id="bank-amount"
@@ -119,7 +119,7 @@ export default function BankPanel({
       />
 
       <p className="mt-3 flex items-center justify-between text-sm">
-        <span className="text-abyss-300">Kamu menerima</span>
+        <span className="text-abyss-300">You receive</span>
         <strong className="text-ember-300">{preview}</strong>
       </p>
 
@@ -130,10 +130,10 @@ export default function BankPanel({
         className="btn-ember font-display mt-4 w-full rounded-2xl py-3.5 tracking-wider transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
       >
         {sending
-          ? "MENUNGGU KONFIRMASI…"
+          ? "AWAITING CONFIRMATION…"
           : tab === "deposit"
-            ? "DEPOSIT SEKARANG"
-            : "WITHDRAW SEKARANG"}
+            ? "DEPOSIT NOW"
+            : "WITHDRAW NOW"}
       </button>
 
       {msg && (
@@ -145,7 +145,7 @@ export default function BankPanel({
       )}
 
       <p className="mt-3 text-center text-[11px] text-abyss-300">
-        Rasio tetap 1 CELO = {fmt(RATE, 0)} API · withdraw kelipatan{" "}
+        Fixed rate 1 CELO = {fmt(RATE, 0)} API · withdraw in multiples of{" "}
         {fmt(MIN_WITHDRAW, 0)} API.
       </p>
     </section>

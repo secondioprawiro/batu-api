@@ -23,12 +23,12 @@ export default function ElementCards() {
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading
           eyebrow="ELEMENT SELECTION"
-          title="Pilih Kekuatanmu"
-          subtitle="Empat elemen, satu arena. Setiap pilihan punya lawan alaminya sendiri."
+          title="Choose Your Power"
+          subtitle="Four elements, one arena. Every choice has its natural opponent."
         />
 
         <p className="mt-5 text-center text-sm text-abyss-200">
-          Elemen pilihanmu:{" "}
+          Your element:{" "}
           <span
             className="font-display el-text text-xl tracking-wider"
             style={{ "--el": chosen.color } as React.CSSProperties}
@@ -93,10 +93,10 @@ export default function ElementCards() {
 
                 <div className="mt-4 flex w-full flex-col gap-1.5 text-xs">
                   <span className="el-chip rounded-full px-3 py-1.5 text-cream">
-                    ⚔️ Mengalahkan {byKey[el.beats].name}
+                    ⚔️ Beats {byKey[el.beats].name}
                   </span>
                   <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-abyss-300">
-                    🛡️ Lemah vs {byKey[el.beatenBy].name}
+                    🛡️ Weak vs {byKey[el.beatenBy].name}
                   </span>
                 </div>
 
@@ -126,11 +126,10 @@ export default function ElementCards() {
             href={`/play?element=${selected}`}
             className="btn-ember font-display inline-block rounded-full px-10 py-4 text-lg tracking-wider transition-transform hover:-translate-y-1"
           >
-            MASUK ARENA DENGAN {chosen.name.toUpperCase()}
+            ENTER ARENA WITH {chosen.name.toUpperCase()}
           </Link>
           <p className="mt-4 text-xs text-abyss-400">
-            Battle on-chain live di Celo mainnet — commit–reveal yang adil
-            dan terverifikasi.
+            Live on-chain battle on Celo mainnet — fair and verified commit–reveal.
           </p>
         </div>
       </div>

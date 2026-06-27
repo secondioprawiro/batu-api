@@ -16,10 +16,10 @@ export type Phase =
   | "result";
 
 const PHASE_STATUS: Record<Exclude<Phase, "idle" | "result">, string> = {
-  approving: "Menyetujui API Coin di wallet…",
-  committing: "Mengirim commitment battle ke Celo…",
-  waiting: "Menunggu block hash (sumber keacakan)…",
-  revealing: "Mengungkap elemen — menentukan hasil…",
+  approving: "Approving API Coin in wallet…",
+  committing: "Sending battle commitment to Celo…",
+  waiting: "Waiting for block hash (source of randomness)…",
+  revealing: "Revealing element — determining result…",
 };
 
 type BattleStageProps = {
@@ -44,17 +44,17 @@ const RESULT_STYLE = {
   win: {
     box: "border-emerald-400/40 bg-emerald-500/10",
     title: "text-emerald-300",
-    heading: "MENANG! 🎉",
+    heading: "WIN! 🎉",
   },
   lose: {
     box: "border-red-400/40 bg-red-500/10",
     title: "text-red-300",
-    heading: "KALAH 💀",
+    heading: "LOSE 💀",
   },
   draw: {
     box: "border-abyss-300/30 bg-abyss-800/40",
     title: "text-abyss-200",
-    heading: "SERI 🤝",
+    heading: "DRAW 🤝",
   },
 } as const;
 
@@ -88,10 +88,10 @@ export default function BattleStage({
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h1 className="font-display text-glow-soft text-2xl tracking-wide text-cream sm:text-3xl">
-            ARENA BATU API
+            BATU API ARENA
           </h1>
           <p className="mt-1 text-sm text-abyss-300">
-            Pilih elemen, pasang bet, kalahkan sistem.
+            Choose element, place bet, beat the system.
           </p>
         </div>
         <span className="rounded-full border border-ember-500/30 bg-ember-500/10 px-3 py-1 text-[10px] font-semibold tracking-widest text-ember-300">
@@ -109,7 +109,7 @@ export default function BattleStage({
           {/* Pemain */}
           <div className="flex w-28 flex-col items-center sm:w-40">
             <span className="text-[10px] font-semibold tracking-[0.3em] text-abyss-300">
-              KAMU
+              YOU
             </span>
             <div
               className="relative mt-2 w-full"
@@ -142,7 +142,7 @@ export default function BattleStage({
           {/* Sistem */}
           <div className="flex w-28 flex-col items-center sm:w-40">
             <span className="text-[10px] font-semibold tracking-[0.3em] text-abyss-300">
-              SISTEM
+              SYSTEM
             </span>
             {phase === "result" && result ? (
               <>
@@ -187,7 +187,7 @@ export default function BattleStage({
                   />
                 </div>
                 <span className="font-display mt-2 animate-pulse tracking-wide text-ember-300">
-                  Memilih…
+                  Choosing…
                 </span>
               </>
             ) : (
@@ -198,7 +198,7 @@ export default function BattleStage({
                   </span>
                 </div>
                 <span className="font-display mt-2 tracking-wide text-abyss-300">
-                  Misteri
+                  Mystery
                 </span>
               </>
             )}
@@ -223,7 +223,7 @@ export default function BattleStage({
                   <strong className="text-emerald-300">
                     +{fmt(result.delta, 2)} API
                   </strong>{" "}
-                  ({WIN_MULTIPLIER}× bet dibayar dari reward pool).
+                  ({WIN_MULTIPLIER}× bet paid from reward pool).
                 </>
               )}
               {result.outcome === "lose" && (
@@ -233,16 +233,16 @@ export default function BattleStage({
                   <strong className="text-red-300">
                     -{fmt(result.bet, 0)} API
                   </strong>{" "}
-                  masuk ke reward pool.
+                  goes into the reward pool.
                 </>
               )}
               {result.outcome === "draw" &&
                 (result.player === result.system ? (
-                  <>Elemen sama — bet dikembalikan, tidak ada perubahan saldo.</>
+                  <>Same element — bet returned, no balance change.</>
                 ) : (
                   <>
-                    {byKey[result.player].name} dan {byKey[result.system].name}{" "}
-                    tidak saling mengalahkan — seri, bet dikembalikan.
+                    {byKey[result.player].name} and {byKey[result.system].name}{" "}
+                    don&apos;t beat each other — draw, bet returned.
                   </>
                 ))}
             </p>
@@ -252,7 +252,7 @@ export default function BattleStage({
               rel="noopener noreferrer"
               className="mt-2 inline-block text-xs text-abyss-300 underline-offset-2 hover:text-ember-300 hover:underline"
             >
-              Lihat transaksi di Blockscout ↗
+              View transaction on Blockscout ↗
             </a>
             <div>
               <button
@@ -260,7 +260,7 @@ export default function BattleStage({
                 onClick={onAgain}
                 className="btn-ember font-display mt-4 rounded-full px-7 py-2.5 tracking-wider transition-transform hover:-translate-y-0.5"
               >
-                ⚔️ BATTLE LAGI
+                ⚔️ BATTLE AGAIN
               </button>
             </div>
           </div>
@@ -269,7 +269,7 @@ export default function BattleStage({
 
       {/* Pemilih elemen */}
       <p className="mt-6 text-xs font-semibold tracking-[0.3em] text-abyss-300">
-        PILIH ELEMEN
+        CHOOSE ELEMENT
       </p>
       <div className="mt-2 grid grid-cols-4 gap-2 sm:gap-3">
         {ELEMENTS.map((el) => {
@@ -346,17 +346,17 @@ export default function BattleStage({
 
       {!betValid && (
         <p className="mt-2 text-xs text-red-300">
-          ⚠️ Bet minimal {MIN_BET} API.
+          ⚠️ Minimum bet {MIN_BET} API.
         </p>
       )}
       {betValid && !betAffordable && (
         <p className="mt-2 text-xs text-red-300">
-          ⚠️ Saldo API kurang — deposit CELO dulu di panel Bank Arena.
+          ⚠️ Insufficient API balance — deposit CELO first in the Arena Bank panel.
         </p>
       )}
       {betValid && betAffordable && !betBackable && (
         <p className="mt-2 text-xs text-red-300">
-          ⚠️ Reward pool sedang rendah — bet maksimum {fmt(poolMaxBet, 0)} API.
+          ⚠️ Reward pool is low — max bet {fmt(poolMaxBet, 0)} API.
         </p>
       )}
 
@@ -368,12 +368,12 @@ export default function BattleStage({
           fighting ? "animate-pulse" : ""
         }`}
       >
-        {fighting ? "⚔️ BERTARUNG…" : "⚔️ FIGHT!"}
+        {fighting ? "⚔️ FIGHTING…" : "⚔️ FIGHT!"}
       </button>
       <p className="mt-3 text-center text-[11px] text-abyss-300">
         {fighting
           ? PHASE_STATUS[phase as Exclude<Phase, "idle" | "result">]
-          : `Menang = ${WIN_MULTIPLIER}× bet dari reward pool · Kalah = bet masuk pool · Seri = bet kembali. Battle = 2 transaksi (commit + reveal).`}
+          : `Win = ${WIN_MULTIPLIER}× bet from reward pool · Lose = bet goes to pool · Draw = bet returned. Battle = 2 transactions (commit + reveal).`}
       </p>
     </section>
   );

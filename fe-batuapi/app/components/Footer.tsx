@@ -39,8 +39,8 @@ export default function Footer() {
             </span>
           </a>
           <p className="mt-4 max-w-xs text-sm text-abyss-300">
-            Web3 Element Battle Game. Pilih elemenmu dan taklukkan arena
-            on-chain.
+            Web3 Element Battle Game. Choose your element and conquer the
+            on-chain arena.
           </p>
           <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#fcff52]/30 bg-[#fcff52]/10 px-3.5 py-1.5 text-xs text-[#fcff52]">
             <span className="h-2 w-2 rounded-full bg-[#fcff52]" />
@@ -68,7 +68,7 @@ export default function Footer() {
 
         <div>
           <h4 className="font-display text-sm tracking-[0.25em] text-abyss-200">
-            KOMUNITAS
+            COMMUNITY
           </h4>
           <div className="mt-4 flex gap-3">
             {SOCIALS.map((s) => (
@@ -83,7 +83,7 @@ export default function Footer() {
             ))}
           </div>
           <p className="mt-4 text-xs text-abyss-300">
-            Kanal komunitas segera hadir.
+            Community channels coming soon.
           </p>
         </div>
       </div>

@@ -57,16 +57,16 @@ import BattleStage, { type Phase } from "./BattleStage";
 import HistoryPanel from "./HistoryPanel";
 
 const ERROR_MESSAGES: Record<string, string> = {
-  ZeroAmount: "Jumlah tidak boleh nol.",
-  BetBelowMinimum: `Bet minimal ${MIN_BET} API.`,
-  InsufficientPool: "Reward pool tidak cukup untuk menampung bet sebesar ini.",
-  NothingToWithdraw: `Withdraw minimal ${fmt(MIN_WITHDRAW, 0)} API (1 CELO).`,
-  ActiveBattleExists: "Masih ada battle yang belum di-reveal. Selesaikan dulu.",
-  NoActiveBattle: "Tidak ada battle aktif.",
-  InvalidReveal: "Data reveal tidak cocok dengan commitment.",
-  RevealTooEarly: "Terlalu cepat — tunggu 1 block lagi lalu coba reveal ulang.",
-  RevealExpired: "Jendela reveal habis. Battle harus di-forfeit.",
-  NotYetExpired: "Battle belum kedaluwarsa — belum bisa forfeit.",
+  ZeroAmount: "Amount cannot be zero.",
+  BetBelowMinimum: `Minimum bet is ${MIN_BET} API.`,
+  InsufficientPool: "Reward pool is too low to cover this bet.",
+  NothingToWithdraw: `Minimum withdrawal is ${fmt(MIN_WITHDRAW, 0)} API (1 CELO).`,
+  ActiveBattleExists: "There is still an unrevealed battle. Finish it first.",
+  NoActiveBattle: "No active battle.",
+  InvalidReveal: "Reveal data does not match the commitment.",
+  RevealTooEarly: "Too early — wait 1 more block then try revealing again.",
+  RevealExpired: "Reveal window expired. Battle must be forfeited.",
+  NotYetExpired: "Battle has not expired yet — cannot forfeit.",
 };
 
 function humanizeError(error: unknown): string {
@@ -79,10 +79,10 @@ function humanizeError(error: unknown): string {
       if (name && ERROR_MESSAGES[name]) return ERROR_MESSAGES[name];
     }
     if (error.shortMessage.includes("User rejected"))
-      return "Transaksi dibatalkan di wallet.";
+      return "Transaction rejected in wallet.";
     return error.shortMessage;
   }
-  return error instanceof Error ? error.message : "Terjadi kesalahan.";
+  return error instanceof Error ? error.message : "An error occurred.";
 }
 
 export default function Arena() {
@@ -214,7 +214,7 @@ export default function Arena() {
   /* === Aksi kontrak === */
 
   const waitForBlockAfter = async (target: bigint) => {
-    if (!publicClient) throw new Error("RPC tidak tersedia.");
+    if (!publicClient) throw new Error("RPC not available.");
     // revealBattle butuh block.number > commitBlock + 1 (Celo ±1 detik/block)
     for (;;) {
       const current = await publicClient.getBlockNumber({ cacheTime: 0 });
@@ -241,7 +241,7 @@ export default function Arena() {
       logs: receipt.logs,
       eventName: "BattleRevealed",
     });
-    if (!revealed) throw new Error("Event BattleRevealed tidak ditemukan.");
+    if (!revealed) throw new Error("BattleRevealed event not found.");
 
     const betApi = Number(formatUnits(revealed.args.bet, 18));
     const payout = Number(formatUnits(revealed.args.payout, 18));
@@ -269,14 +269,14 @@ export default function Arena() {
   const fight = async () => {
     if (!address || !publicClient || busy) return;
     if (wrongChain) {
-      setError("Pindah ke jaringan Celo dulu (lihat tombol wallet di atas).");
+      setError("Switch to the Celo network first (see wallet button above).");
       return;
     }
     const betN = Math.floor(Number(bet));
     if (!Number.isFinite(betN) || betN < MIN_BET || betN > api) return;
     if (betN > poolMaxBet) {
       setError(
-        `Reward pool sedang rendah — bet maksimum saat ini ${fmt(poolMaxBet, 0)} API.`,
+        `Reward pool is too low — current max bet is ${fmt(poolMaxBet, 0)} API.`,
       );
       return;
     }
@@ -374,11 +374,11 @@ export default function Arena() {
   };
 
   const deposit = async (amount: number): Promise<string | null> => {
-    if (!address || !publicClient) return "Hubungkan wallet dulu.";
-    if (wrongChain) return "Pindah ke jaringan Celo dulu.";
+    if (!address || !publicClient) return "Connect your wallet first.";
+    if (wrongChain) return "Switch to the Celo network first.";
     if (!Number.isFinite(amount) || amount <= 0)
-      return "Masukkan jumlah yang valid.";
-    if (amount > celo) return "Saldo CELO tidak cukup.";
+      return "Enter a valid amount.";
+    if (amount > celo) return "Insufficient CELO balance.";
     try {
       const txHash = await writeContractAsync({
         address: BATU_API_ADDRESS,
@@ -396,13 +396,13 @@ export default function Arena() {
   };
 
   const withdraw = async (amount: number): Promise<string | null> => {
-    if (!address || !publicClient) return "Hubungkan wallet dulu.";
-    if (wrongChain) return "Pindah ke jaringan Celo dulu.";
+    if (!address || !publicClient) return "Connect your wallet first.";
+    if (wrongChain) return "Switch to the Celo network first.";
     if (!Number.isFinite(amount) || amount <= 0)
-      return "Masukkan jumlah yang valid.";
+      return "Enter a valid amount.";
     if (amount < MIN_WITHDRAW)
-      return `Withdraw minimal ${fmt(MIN_WITHDRAW, 0)} API (= 1 CELO).`;
-    if (amount > api) return "Saldo API tidak cukup.";
+      return `Minimum withdrawal is ${fmt(MIN_WITHDRAW, 0)} API (= 1 CELO).`;
+    if (amount > api) return "Insufficient API balance.";
     try {
       const txHash = await writeContractAsync({
         address: BATU_API_ADDRESS,
@@ -451,8 +451,8 @@ export default function Arena() {
 
       {/* Strip jaringan */}
       <p className="relative z-10 border-b border-ember-500/20 bg-ember-500/10 px-4 py-2 text-center text-xs text-ember-300">
-        ⛓️ LIVE di Celo mainnet — battle memakai commit–reveal on-chain;
-        menang dibayar 1.95× bet dari reward pool.
+        ⛓️ LIVE on Celo mainnet — battles use on-chain commit–reveal;
+        wins pay 1.95× bet from the reward pool.
       </p>
 
       {/* HUD */}
@@ -471,7 +471,7 @@ export default function Arena() {
               BATU <span className="text-ember-400">API</span>
             </span>
             <span className="ml-1 hidden text-xs text-abyss-300 sm:inline">
-              ← kembali
+              ← back
             </span>
           </Link>
 
@@ -503,37 +503,37 @@ export default function Arena() {
           {showPendingBanner && (
             <div className="rounded-2xl border border-ember-500/40 bg-ember-500/10 p-4 text-sm text-ember-200">
               <p className="font-semibold">
-                ⏳ Ada battle yang belum di-reveal (bet{" "}
+                ⏳ There is an unrevealed battle (bet{" "}
                 {fmt(Number(formatUnits(pendingBet, 18)), 0)} API).
               </p>
               {commitMatches && !revealExpired && (
                 <>
                   <p className="mt-1 text-ember-300/90">
                     {revealReady
-                      ? "Block hash sudah tersedia — reveal sekarang untuk melihat hasilnya."
-                      : "Menunggu 1 block lagi sebelum bisa reveal."}
+                      ? "Block hash available — reveal now to see the result."
+                      : "Waiting 1 more block before reveal."}
                   </p>
                   <button
                     type="button"
                     onClick={resumeReveal}
                     className="btn-ember font-display mt-3 rounded-full px-6 py-2 text-sm tracking-wider"
                   >
-                    🔓 LANJUTKAN REVEAL
+                    🔓 CONTINUE REVEAL
                   </button>
                 </>
               )}
               {!commitMatches && !revealExpired && (
                 <p className="mt-1 text-ember-300/90">
-                  Secret battle ini tidak ditemukan di browser ini (mungkin
-                  di-commit dari perangkat lain). Tanpa secret, battle hanya
-                  bisa diselesaikan lewat forfeit setelah ±256 block.
+                  Battle secret not found in this browser (may have been
+                  committed on another device). Without the secret, the battle
+                  can only be resolved via forfeit after ±256 blocks.
                 </p>
               )}
               {revealExpired && (
                 <>
                   <p className="mt-1 text-ember-300/90">
-                    Jendela reveal sudah lewat. Forfeit untuk membuka arena
-                    lagi (bet hangus ke pool).
+                    Reveal window has passed. Forfeit to reopen the arena
+                    (bet goes to pool).
                   </p>
                   <button
                     type="button"
@@ -541,7 +541,7 @@ export default function Arena() {
                     disabled={forfeiting}
                     className="font-display mt-3 rounded-full border border-red-400/50 bg-red-500/10 px-6 py-2 text-sm tracking-wider text-red-300 disabled:opacity-50"
                   >
-                    {forfeiting ? "MEMPROSES…" : "💀 FORFEIT"}
+                    {forfeiting ? "PROCESSING…" : "💀 FORFEIT"}
                   </button>
                 </>
               )}
@@ -596,11 +596,11 @@ export default function Arena() {
               className="mx-auto h-28 w-28 object-contain drop-shadow-[0_0_24px_rgba(255,138,30,0.45)]"
             />
             <h1 className="font-display text-glow-soft mt-4 text-2xl tracking-wide text-cream">
-              MASUK ARENA
+              ENTER ARENA
             </h1>
             <p className="mt-3 text-sm text-abyss-300">
-              Hubungkan wallet Celo-mu untuk mulai battle on-chain. Deposit
-              CELO, terima API Coin, dan lawan sistem.
+              Connect your Celo wallet to start on-chain battles. Deposit
+              CELO, receive API Coin, and fight the system.
             </p>
             <button
               type="button"
@@ -613,7 +613,7 @@ export default function Arena() {
               href="/"
               className="mt-4 inline-block text-xs text-abyss-300 transition-colors hover:text-ember-300"
             >
-              ← Kembali ke beranda
+              ← Back to home
             </Link>
           </div>
         </div>

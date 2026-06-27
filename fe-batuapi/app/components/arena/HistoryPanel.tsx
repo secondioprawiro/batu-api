@@ -2,9 +2,9 @@ import { EMOJI, fmt, type BattleRecord } from "@/app/lib/arena";
 import { EXPLORER_URL } from "@/app/lib/contracts";
 
 const OUTCOME_LABEL = {
-  win: { text: "MENANG", className: "text-emerald-300" },
-  lose: { text: "KALAH", className: "text-red-300" },
-  draw: { text: "SERI", className: "text-abyss-300" },
+  win: { text: "WIN", className: "text-emerald-300" },
+  lose: { text: "LOSE", className: "text-red-300" },
+  draw: { text: "DRAW", className: "text-abyss-300" },
 } as const;
 
 export default function HistoryPanel({
@@ -15,11 +15,11 @@ export default function HistoryPanel({
   return (
     <section className="rounded-[28px] border border-white/5 bg-abyss-900/70 p-6">
       <h2 className="font-display text-lg tracking-wider text-cream">
-        RIWAYAT BATTLE
+        BATTLE HISTORY
       </h2>
       {history.length === 0 ? (
         <p className="mt-4 text-sm text-abyss-300">
-          Belum ada battle. Ayo turun ke arena! ⚔️
+          No battles yet. Step into the arena! ⚔️
         </p>
       ) : (
         <ul className="mt-4 space-y-2">
@@ -31,7 +31,7 @@ export default function HistoryPanel({
                   href={`${EXPLORER_URL}/tx/${record.txHash}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="Lihat transaksi di Blockscout"
+                  title="View transaction on Blockscout"
                   className="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-night/50 px-3 py-2.5 text-sm transition-colors hover:border-ember-400/40"
                 >
                   <span className="text-base">
